@@ -1,0 +1,10 @@
+{
+  "schema": "omen_alert.v1",
+  "codename": "SENTRY",
+  "node_id": "sentry-pi-zero-001",
+  "level": "ORANGE",
+  "threat_score": 0.68,
+  "seq": 412,
+  "timestamp_s": 1717776012.5,
+  "mesh_from": "sentry-pi-zero-001"
+}

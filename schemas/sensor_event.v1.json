@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Fratres-X-AI/fratres-sentry/schemas/sensor_event.v1.json",
+  "title": "SENTRY sensor_event.v1",
+  "type": "object",
+  "required": ["schema", "node_id", "seq", "timestamp_s", "channels"],
+  "properties": {
+    "schema": { "const": "sensor_event.v1" },
+    "codename": { "const": "SENTRY" },
+    "node_id": { "type": "string", "minLength": 1 },
+    "seq": { "type": "integer", "minimum": 0 },
+    "timestamp_s": { "type": "number", "minimum": 0 },
+    "channels": {
+      "type": "object",
+      "required": ["pir", "acoustic", "rf", "visual"],
+      "properties": {
+        "pir": { "type": "number", "minimum": 0, "maximum": 1 },
+        "acoustic": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rf": { "type": "number", "minimum": 0, "maximum": 1 },
+        "visual": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "flags": {
+      "type": "object",
+      "properties": {
+        "jamming_suspected": { "type": "boolean" },
+        "low_visibility": { "type": "boolean" },
+        "tamper_detected": { "type": "boolean" },
+        "hardware_active_window": { "type": "boolean" },
+        "thermal_throttle": { "type": "boolean" },
+        "fallback_channels": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

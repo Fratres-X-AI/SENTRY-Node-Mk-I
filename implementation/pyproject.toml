@@ -1,0 +1,44 @@
+[project]
+name = "sentry"
+version = "0.3.0"
+description = "SENTRY — passive Pi early-warning guardian node (Fratres X AI)"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "jsonschema>=4.20", "numpy>=1.26", "scipy>=1.11", "psutil>=5.9"]
+hardware = [
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "psutil>=5.9",
+  "PyAudio>=0.2.14",
+  "opencv-python-headless>=4.8",
+  "meshtastic>=2.3.0",
+  "pyserial>=3.5",
+]
+pi = [
+  "lgpio>=0.2.2",
+  "RPi.GPIO>=0.7.1",
+]
+gpu = [
+  "numpy>=1.26",
+  "torch>=2.2",
+]
+
+[project.scripts]
+sentry-guard = "sentry.cli:guard_main"
+sentry-sim = "sentry.cli:sim_main"
+sentry-stress = "sentry.simulation.stress_test:main"
+sentry-melt = "sentry.cli:melt_main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

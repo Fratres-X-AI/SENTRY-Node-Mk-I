@@ -1,0 +1,18 @@
+{
+  "schema": "alert_frame.v1",
+  "codename": "SENTRY",
+  "node_id": "sentry-pi-zero-001",
+  "seq": 412,
+  "timestamp_s": 1717776012.5,
+  "level": "ORANGE",
+  "threat_score": 0.68,
+  "rationale": "Elevated fused threat score — early warning ORANGE | RF burst detected | 100-500Hz propeller peak",
+  "guardian_state": "alerting",
+  "sensor_event": {
+    "schema": "sensor_event.v1",
+    "node_id": "sentry-pi-zero-001",
+    "seq": 1842,
+    "timestamp_s": 1717776012.5,
+    "channels": { "pir": 0.82, "acoustic": 0.61, "rf": 0.74, "visual": 0.38 }
+  }
+}

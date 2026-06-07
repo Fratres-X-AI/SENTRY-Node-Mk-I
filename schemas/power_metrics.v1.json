@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Fratres-X-AI/fratres-sentry/schemas/power_metrics.v1.json",
+  "title": "SENTRY power_metrics.v1",
+  "type": "object",
+  "required": ["schema", "codename", "timestamp_s", "estimated_watts", "duty_active"],
+  "properties": {
+    "schema": { "const": "power_metrics.v1" },
+    "codename": { "const": "SENTRY" },
+    "timestamp_s": { "type": "number" },
+    "cpu_percent": { "type": "number" },
+    "ram_used_mb": { "type": "number" },
+    "ram_total_mb": { "type": "number" },
+    "estimated_watts": { "type": "number" },
+    "duty_active": { "type": "boolean" },
+    "throttled": { "type": "boolean" },
+    "cpu_temp_c": { "type": "number" },
+    "source": { "type": "string" }
+  }
+}

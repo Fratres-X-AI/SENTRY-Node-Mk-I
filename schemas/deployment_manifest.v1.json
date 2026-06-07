@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Fratres-X-AI/fratres-sentry/schemas/deployment_manifest.v1.json",
+  "title": "SENTRY deployment_manifest.v1",
+  "type": "object",
+  "required": ["schema", "codename", "site_id", "nodes", "perimeter"],
+  "properties": {
+    "schema": { "const": "deployment_manifest.v1" },
+    "codename": { "const": "SENTRY" },
+    "type_designation": { "type": "string", "examples": ["AN/GSQ-100(V)1"] },
+    "common_name": { "type": "string", "examples": ["SENTRY Node Mk I"] },
+    "kit_designation": { "type": "string", "examples": ["AN/GSQ-100A(V)1"] },
+    "kit_common_name": { "type": "string", "examples": ["SENTRY Net (4-pack)"] },
+    "role_descriptor": { "type": "string", "examples": ["Passive Multi-Sensor Early-Warning Node (PMSEWN)"] },
+    "site_id": { "type": "string" },
+    "site_name": { "type": "string" },
+    "perimeter": {
+      "type": "object",
+      "properties": {
+        "shape": { "enum": ["rectangle", "circle", "line"] },
+        "width_m": { "type": "number" },
+        "depth_m": { "type": "number" },
+        "guardian_radius_m": { "type": "number" }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id", "role", "location"],
+        "properties": {
+          "node_id": { "type": "string" },
+          "type_designation": { "type": "string", "examples": ["AN/GSQ-100(V)1"] },
+          "role": { "enum": ["corner", "gate", "relay", "reserve"] },
+          "location": {
+            "type": "object",
+            "required": ["lat_deg", "lon_deg", "alt_m"],
+            "properties": {
+              "lat_deg": { "type": "number" },
+              "lon_deg": { "type": "number" },
+              "alt_m": { "type": "number" },
+              "post_label": { "type": "string" }
+            }
+          },
+          "mesh_channel": { "type": "integer" },
+          "meshtastic_id": { "type": "string" }
+        }
+      }
+    },
+    "power_budget": {
+      "type": "object",
+      "properties": {
+        "target_avg_watts_per_node": { "type": "number" },
+        "battery_wh": { "type": "number" },
+        "estimated_runtime_h": { "type": "number" }
+      }
+    }
+  }
+}

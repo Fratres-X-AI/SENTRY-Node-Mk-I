@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Fratres-X-AI/fratres-sentry/schemas/alert_frame.v1.json",
+  "title": "SENTRY alert_frame.v1",
+  "type": "object",
+  "required": ["schema", "node_id", "seq", "timestamp_s", "level", "threat_score", "rationale"],
+  "properties": {
+    "schema": { "const": "alert_frame.v1" },
+    "codename": { "const": "SENTRY" },
+    "node_id": { "type": "string", "minLength": 1 },
+    "seq": { "type": "integer", "minimum": 0 },
+    "timestamp_s": { "type": "number", "minimum": 0 },
+    "level": { "type": "string", "enum": ["CLEAR", "YELLOW", "ORANGE", "RED", "HOLD"] },
+    "threat_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "rationale": { "type": "string", "minLength": 1 },
+    "guardian_state": {
+      "type": "string",
+      "enum": ["watch", "confirming", "alerting", "cooldown", "hold_safe"]
+    },
+    "sensor_event": { "type": "object" }
+  },
+  "additionalProperties": false
+}

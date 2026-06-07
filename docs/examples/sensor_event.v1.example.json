@@ -1,0 +1,31 @@
+{
+  "schema": "sensor_event.v1",
+  "codename": "SENTRY",
+  "node_id": "sentry-pi-zero-001",
+  "seq": 1842,
+  "timestamp_s": 1717776012.5,
+  "channels": {
+    "pir": 0.82,
+    "acoustic": 0.61,
+    "rf": 0.74,
+    "visual": 0.38
+  },
+  "flags": {
+    "jamming_suspected": false,
+    "low_visibility": false,
+    "tamper_detected": false,
+    "hardware_active_window": true,
+    "rf_burst_2g4": true,
+    "rf_burst_5g8": false,
+    "acoustic_propeller_peak": true,
+    "rf_source": "rtl_power",
+    "fallback_channels": {
+      "pir": false,
+      "acoustic": false,
+      "rf": false,
+      "visual": true,
+      "tamper": false,
+      "meshtastic": false
+    }
+  }
+}

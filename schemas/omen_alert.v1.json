@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Fratres-X-AI/fratres-sentry/schemas/omen_alert.v1.json",
+  "title": "OMEN alert relay payload (Meshtastic)",
+  "type": "object",
+  "required": ["schema", "codename", "node_id", "level", "threat_score", "seq", "timestamp_s"],
+  "properties": {
+    "schema": { "const": "omen_alert.v1" },
+    "codename": { "const": "SENTRY" },
+    "node_id": { "type": "string" },
+    "level": { "type": "string", "enum": ["CLEAR", "YELLOW", "ORANGE", "RED", "HOLD"] },
+    "threat_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "seq": { "type": "integer", "minimum": 0 },
+    "timestamp_s": { "type": "number", "minimum": 0 }
+  },
+  "additionalProperties": false
+}

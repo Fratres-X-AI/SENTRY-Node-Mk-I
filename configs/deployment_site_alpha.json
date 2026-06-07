@@ -1,0 +1,97 @@
+{
+  "schema": "deployment_manifest.v1",
+  "codename": "SENTRY",
+  "type_designation": "AN/GSQ-100(V)1",
+  "common_name": "SENTRY Node Mk I",
+  "kit_designation": "AN/GSQ-100A(V)1",
+  "kit_common_name": "SENTRY Net (4-pack)",
+  "role_descriptor": "Passive Multi-Sensor Early-Warning Node (PMSEWN)",
+  "site_id": "SITE-ALPHA-001",
+  "site_name": "Example Forward Operating Perimeter (paper exercise)",
+  "perimeter": {
+    "shape": "rectangle",
+    "width_m": 240,
+    "depth_m": 180,
+    "guardian_radius_m": 120
+  },
+  "enclosure": {
+    "model": "Hammond 1591XXSBK-style IP65 ABS",
+    "external_mm": { "length": 165, "width": 135, "height": 85 },
+    "internal_clear_mm": { "length": 150, "width": 120, "height": 70 },
+    "mass_kg": 0.45,
+    "mounting": "U-bolt to 50mm pole at 2.0m AGL"
+  },
+  "nodes": [
+    {
+      "node_id": "sentry-pi-zero-001",
+      "type_designation": "AN/GSQ-100(V)1",
+      "role": "corner",
+      "post_label": "NE corner post",
+      "location": { "lat_deg": 51.50820, "lon_deg": -0.12650, "alt_m": 12.0 },
+      "mesh_channel": 1,
+      "meshtastic_id": "!SENTRY001",
+      "coverage_overlap_m": 40
+    },
+    {
+      "node_id": "sentry-pi-zero-002",
+      "type_designation": "AN/GSQ-100(V)1",
+      "role": "corner",
+      "post_label": "NW corner post",
+      "location": { "lat_deg": 51.50820, "lon_deg": -0.12910, "alt_m": 12.0 },
+      "mesh_channel": 1,
+      "meshtastic_id": "!SENTRY002",
+      "coverage_overlap_m": 40
+    },
+    {
+      "node_id": "sentry-pi-zero-003",
+      "type_designation": "AN/GSQ-100(V)1",
+      "role": "gate",
+      "post_label": "South gate post",
+      "location": { "lat_deg": 51.50680, "lon_deg": -0.12780, "alt_m": 11.5 },
+      "mesh_channel": 1,
+      "meshtastic_id": "!SENTRY003",
+      "coverage_overlap_m": 35
+    },
+    {
+      "node_id": "sentry-pi-zero-004",
+      "type_designation": "AN/GSQ-100(V)1",
+      "role": "relay",
+      "post_label": "Central relay mast",
+      "location": { "lat_deg": 51.50750, "lon_deg": -0.12780, "alt_m": 14.0 },
+      "mesh_channel": 1,
+      "meshtastic_id": "!SENTRY004",
+      "coverage_overlap_m": 50
+    }
+  ],
+  "power_budget": {
+    "target_avg_watts_per_node": 3.8,
+    "duty_active_s": 4,
+    "duty_sleep_s": 6,
+    "battery_wh": 37,
+    "battery_model": "2S LiPo 5000mAh @ 7.4V nominal (example)",
+    "estimated_runtime_h": 9.7,
+    "solar_option_w": 10
+  },
+  "rf_planning": {
+    "band_2g4_mhz": { "start": 2400, "end": 2500, "hardware": "RTL-SDR V3", "notes": "Passive burst/jamming sense" },
+    "band_5g8_mhz": { "start": 5800, "end": 5900, "hardware": "NOT RTL2832 — synthetic in v0.3.0", "notes": "Requires future 5.8 GHz front-end" },
+    "friis_example_2g4": {
+      "tx_power_dbm": 20,
+      "distance_m": 300,
+      "estimated_rx_dbm": -72
+    }
+  },
+  "acoustic_planning": {
+    "band_hz": { "low": 100, "high": 500 },
+    "use_case": "Small UAS propeller tone / ground approach warning",
+    "mic_height_m_agl": 2.0,
+    "wind_screen": "foam wind muff on USB MEMS"
+  },
+  "outputs": {
+    "local_alerts": "validation/reports/sentry_live_alerts.jsonl",
+    "audit_chain": "validation/reports/sentry_live_audit.jsonl",
+    "power_log": "validation/reports/sentry_power.jsonl",
+    "mesh_spool": "/var/lib/sentry/meshtastic_spool.jsonl",
+    "omen_schema": "schemas/omen_alert.v1.json"
+  }
+}

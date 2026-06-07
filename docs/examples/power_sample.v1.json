@@ -1,0 +1,13 @@
+{
+  "schema": "power_sample.v1",
+  "codename": "SENTRY",
+  "timestamp_s": 1717776000.0,
+  "cpu_percent": 42.5,
+  "ram_used_mb": 287.3,
+  "ram_total_mb": 512.0,
+  "estimated_watts": 3.25,
+  "duty_active": true,
+  "throttled": false,
+  "cpu_temp_c": 58.2,
+  "source": "pi_psutil"
+}

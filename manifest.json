@@ -1,0 +1,38 @@
+{
+  "codename": "SENTRY",
+  "project": "SENTRY-Node-Mk-I",
+  "organization": "Fratres X AI — Defense Projects HQ",
+  "version": "0.3.0",
+  "mode": "defensive-only",
+  "platform": "raspberry-pi",
+  "role": "passive-early-warning-guardian",
+  "designation": {
+    "type": "AN/GSQ-100(V)1",
+    "common_name": "SENTRY Node Mk I",
+    "role_descriptor": "Passive Multi-Sensor Early-Warning Node (PMSEWN)",
+    "class": "Unattended ground sensor (UGS) / perimeter warning",
+    "emit_mode": "receive-only",
+    "kit_type": "AN/GSQ-100A(V)1",
+    "kit_common_name": "SENTRY Net (4-pack)",
+    "briefing_line": "AN/GSQ-100(V)1 SENTRY — passive ground early-warning node; PIR + acoustic + RF receive fusion; LoRa mesh alert relay; no emit, no engage"
+  },
+  "variants": {
+    "V1": { "hardware": "Pi Zero 2 W, RTL-SDR, MEMS, PIR, Meshtastic", "name": "SENTRY Mk I" },
+    "V2": { "hardware": "Same + hardened enclosure / solar", "name": "SENTRY Mk II" },
+    "V3": { "hardware": "Reduced RF (acoustic + PIR only)", "name": "SENTRY-Lite" }
+  },
+  "constellation_stages": [1, 4],
+  "description": "Edge Pi sentinel node: passive multi-sensor fusion, threat scoring, and early-warning alerts with immutable audit chain. No engagement or kinetic logic.",
+  "repository": "https://github.com/Fratres-X-AI/SENTRY-Node-Mk-I",
+  "schemas": {
+    "sensor_event": "schemas/sensor_event.v1.json",
+    "alert_frame": "schemas/alert_frame.v1.json",
+    "audit_entry": "schemas/audit_entry.v1.json",
+    "omen_alert": "schemas/omen_alert.v1.json",
+    "power_metrics": "schemas/power_metrics.v1.json",
+    "deployment_manifest": "schemas/deployment_manifest.v1.json"
+  },
+  "system_datasheet": "docs/system_datasheet.md",
+  "example_deployment": "configs/deployment_site_alpha.json",
+  "cli_entrypoints": ["sentry-guard", "sentry-sim"]
+}

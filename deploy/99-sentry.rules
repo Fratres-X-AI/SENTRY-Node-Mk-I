@@ -1,0 +1,9 @@
+# RTL-SDR Blog V3 / generic RTL2832U — read-only IQ for rtl_power
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="2838", GROUP="sentry", MODE="0640", TAG+="uaccess"
+
+# Meshtastic / ESP32 USB serial
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", GROUP="sentry", MODE="0660", SYMLINK+="meshtastic"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="239a", GROUP="sentry", MODE="0660", SYMLINK+="meshtastic"
+
+# USB audio (ReSpeaker / mini USB mic)
+SUBSYSTEM=="usb", ATTRS{idVendor}=="2886", GROUP="sentry", MODE="0640"

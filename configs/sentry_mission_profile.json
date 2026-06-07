@@ -1,0 +1,27 @@
+{
+  "profile_id": "sentry-perimeter-v1",
+  "codename": "SENTRY",
+  "mode": "defensive-only",
+  "guardian": {
+    "enabled": true,
+    "perimeter_radius_m": 120.0,
+    "dwell_confirm_s": 3.0,
+    "cooldown_s": 30.0
+  },
+  "thresholds": {
+    "yellow_score": 0.35,
+    "orange_score": 0.55,
+    "red_score": 0.75,
+    "jamming_hold_score": 0.90
+  },
+  "sensors": {
+    "pir_weight": 0.30,
+    "acoustic_weight": 0.25,
+    "rf_weight": 0.20,
+    "visual_weight": 0.25
+  },
+  "audit": {
+    "hmac_secret_env": "SENTRY_AUDIT_HMAC_KEY",
+    "chain_file": "validation/reports/audit_chain.jsonl"
+  }
+}
