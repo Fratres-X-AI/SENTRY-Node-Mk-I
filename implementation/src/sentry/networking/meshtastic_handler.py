@@ -129,3 +129,23 @@ class MeshtasticHandler:
             "mesh_available": self._available,
             "inbox_count": len(self.poll_inbox()),
         }
+
+    def chain_auto_join(self, peer_ids: list[str]) -> dict[str, Any]:
+        """
+        Register chain topology peers for post-landing mesh join.
+        Spool-based when hardware absent — defensive relay only.
+        """
+        self.config.peers = list(dict.fromkeys(peer_ids))
+        result = {
+            "codename": "SENTRY",
+            "local_node": self.config.local.node_id,
+            "peers_registered": self.config.peers,
+            "mesh_available": self._available,
+            "joined": self._available,
+        }
+        if not self._available:
+            self._spool_write(
+                self.config.spool_path,
+                json.dumps({"event": "chain_auto_join", **result}, separators=(",", ":")),
+            )
+        return result

@@ -12,6 +12,12 @@
 | R6 | HMAC audit not tamper-evident in hardware | Medium | GPIO tamper → audit + dry-run wipe | No secure element |
 | R7 | Simulation ≠ field EW performance | High | Clearly labeled synthetic V&V | **Bench with 1–2 nodes required** |
 | R8 | Export/ITAR for SDR | Medium | [`export_screening.md`](export_screening.md) draft | Counsel sign-off pending |
+| R9 | Line-charge / rocket launch shock destroys COTS | **Critical** | **Refused** — sim reference only; pneumatic soft max | No shock-table validation |
+| R10 | Connected chain single-point failure | High | Topology model + chain_break failure mode | No field line tensile test |
+| R11 | Entanglement on landing | High | Monte Carlo entanglement prior; mesh join fail | No throw trials |
+| R12 | Antenna / RTL damage post-landing | High | Post-landing BIT; guardian suppress until operational | No deploy mechanism in BOM |
+| R13 | Battery rupture under impact | High | 4% rupture prior in BIT sim | No LiPo abuse test |
+| R14 | Deployment adds soldier hazard | **Critical** | Mechanical non-explosive only in scope | Explosive paths explicitly refused |
 
 ## Friis range note (planning only)
 

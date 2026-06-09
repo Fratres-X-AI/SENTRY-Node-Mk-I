@@ -20,5 +20,7 @@ jobs:
         run: pytest implementation/tests/ -q -k "not gpu"
       - name: Simulation smoke
         run: python validation/vv/run_sentry_simulation.py
+      - name: Build readiness (software gate)
+        run: python validation/build_readiness.py
       - name: Defense readiness audit
         run: python run_complete_audit.py

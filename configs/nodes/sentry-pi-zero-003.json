@@ -1,0 +1,96 @@
+{
+  "node_id": "sentry-pi-zero-003",
+  "codename": "SENTRY",
+  "location": {
+    "lat_deg": 51.5068,
+    "lon_deg": -0.1278,
+    "alt_m": 11.5
+  },
+  "hardware_profile": "raspberry-pi-zero-2-w",
+  "simulation": {
+    "enabled": false,
+    "fallback_scenario": "benign",
+    "rng_seed": 42,
+    "sample_rate_hz": 0.5
+  },
+  "hardware": {
+    "profile": "raspberry-pi-zero-2-w",
+    "pir": {
+      "gpio_pin": 17,
+      "pull": "down"
+    },
+    "tamper": {
+      "gpio_pin": 27,
+      "pull": "up",
+      "active_low": true
+    },
+    "acoustic": {
+      "sample_rate_hz": 16000,
+      "frame_samples": 4096,
+      "band_low_hz": 100,
+      "band_high_hz": 500,
+      "device_index": null,
+      "peak_prominence": 0.08
+    },
+    "rf_sensor": {
+      "device_index": 0,
+      "integration_s": 2,
+      "timeout_s": 12,
+      "jamming_delta_db": 12,
+      "bands": [
+        {
+          "name": "2g4",
+          "start_mhz": 2400,
+          "end_mhz": 2500,
+          "bin_hz": 200000,
+          "burst_threshold_db": 10,
+          "rtl_capable": true
+        },
+        {
+          "name": "5g8",
+          "start_mhz": 5800,
+          "end_mhz": 5900,
+          "bin_hz": 200000,
+          "burst_threshold_db": 10,
+          "rtl_capable": false
+        }
+      ]
+    },
+    "visual": {
+      "camera_index": 0,
+      "frame_width": 160,
+      "frame_height": 120
+    },
+    "meshtastic": {
+      "device_path": "/dev/ttyACM0",
+      "peers": [
+        "sentry-pi-zero-001",
+        "sentry-pi-zero-002",
+        "sentry-pi-zero-004"
+      ],
+      "fallback_spool": "/var/lib/sentry/meshtastic_spool.jsonl"
+    },
+    "duty_cycle": {
+      "active_window_s": 4.0,
+      "sleep_window_s": 6.0,
+      "target_active_watts": 2.5
+    }
+  },
+  "power": {
+    "log_path": "/var/lib/sentry/sentry_power.jsonl",
+    "target_avg_watts": 5.0
+  },
+  "tamper_response": {
+    "dry_run": true,
+    "wipe_env_keys": [
+      "SENTRY_AUDIT_HMAC_KEY"
+    ],
+    "wipe_paths": [
+      "/var/lib/sentry/meshtastic_spool.jsonl"
+    ]
+  },
+  "outputs": {
+    "alert_dir": "/var/lib/sentry/alerts",
+    "log_prefix": "SENTRY"
+  }
+}

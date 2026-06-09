@@ -222,5 +222,70 @@ def melt_main() -> int:
     return stress_main()
 
 
+def deploy_main() -> int:
+    """Mechanical chain deployment simulation (no explosives)."""
+    root = _repo_root()
+    parser = argparse.ArgumentParser(description="SENTRY chain deployment simulator")
+    parser.add_argument("--config", type=Path, default=root / "configs" / "deployment_chain_alpha.json")
+    parser.add_argument("--monte-carlo", action="store_true", help="Run impact/join Monte Carlo")
+    parser.add_argument("--total", type=int, default=50_000)
+    parser.add_argument("--gpu", action="store_true", help="Force CUDA for Monte Carlo (RunPod)")
+    parser.add_argument("--compare-line-charge", action="store_true", help="Include line-charge reference (destructive)")
+    parser.add_argument("--output", type=Path, default=root / "validation" / "reports" / "deployment-chain.json")
+    args = parser.parse_args()
+
+    _setup_logging()
+    import os
+
+    cfg_data = _load_json(args.config)
+    dep = cfg_data.get("deployment", cfg_data)
+    chain_id = str(cfg_data.get("chain_id", "CHAIN-ALPHA"))
+
+    mission = {"deployment": {"enabled": True, **dep}}
+    guardian = SentryGuardian("sentry-chain-000", mission)
+    audit = AuditLogger()
+
+    report: dict = {
+        "codename": "SENTRY",
+        "type_designation": cfg_data.get("type_designation", "AN/GSQ-100(V)1"),
+        "chain_id": chain_id,
+        "mode": "defensive-only",
+        "launch_method": dep.get("launch_method", "pneumatic_soft"),
+    }
+
+    sequence = guardian.run_deployment_sequence()
+    report["deployment_sequence"] = sequence
+    audit.append("deployment_sequence", sequence)
+
+    if args.monte_carlo:
+        if args.gpu:
+            os.environ["SENTRY_FORCE_GPU"] = "1"
+        from sentry.deployment.config import ChainDeploymentConfig
+        from sentry.deployment.monte_carlo_impact import gpu_monte_carlo_deployment
+
+        mc = gpu_monte_carlo_deployment(
+            total=args.total,
+            config=ChainDeploymentConfig.from_dict(dep),
+            method=dep.get("launch_method", "pneumatic_soft"),
+        )
+        report["monte_carlo"] = mc.to_dict()
+        audit.append("deployment_monte_carlo", report["monte_carlo"])
+
+    if args.compare_line_charge:
+        from sentry.deployment.config import ChainDeploymentConfig
+        from sentry.deployment.physics import simulate_line_deployment
+
+        lc = simulate_line_deployment(
+            ChainDeploymentConfig.from_dict({**dep, "launch_method": "line_charge_reference"})
+        )
+        report["line_charge_reference"] = lc.to_dict()
+        audit.append("line_charge_reference", report["line_charge_reference"])
+
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(report, indent=2))
+    return 0 if sequence.get("operational") or not args.monte_carlo else 0
+
+
 if __name__ == "__main__":
     sys.exit(sim_main())

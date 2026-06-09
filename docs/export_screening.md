@@ -5,7 +5,7 @@
 
 ## Scope
 
-SENTRY v0.2.0 is a **receive-only** passive sensing stack:
+SENTRY v0.4.0-build is a **receive-only** passive sensing stack:
 
 | Component | Transmit? | Notes |
 |-----------|-----------|-------|

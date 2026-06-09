@@ -2,7 +2,7 @@
 # SENTRY Pi Zero 2 W bootstrap — run on target as root or with sudo
 set -euo pipefail
 
-REPO="${SENTRY_REPO:-/opt/fratres-sentry}"
+REPO="${SENTRY_REPO:-/opt/sentry-node-mk-i}"
 PY="${REPO}/.venv/bin/python"
 
 echo "[SENTRY] apt packages..."

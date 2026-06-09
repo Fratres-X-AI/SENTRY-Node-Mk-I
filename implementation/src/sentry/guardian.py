@@ -7,6 +7,7 @@ import time
 from dataclasses import dataclass
 from typing import Any
 
+from sentry.deployment.manager import DeploymentManager
 from sentry.fusion import SensorFusion
 from sentry.scoring import ThreatScorer, ThreatThresholds
 from sentry.sensors.power_metrics import PowerMetrics, PowerMetricsConfig
@@ -45,11 +46,23 @@ class SentryGuardian:
         self.fusion = SensorFusion(mission.get("sensors", {}))
         self.scorer = ThreatScorer()
         self.power = power_metrics
+        self.deployment = DeploymentManager.from_mission(mission)
         self._seq = 0
         self._state = "watch"
         self._elevated_since: float | None = None
         self._cooldown_until: float = 0.0
         self._last_level = "CLEAR"
+
+    def run_deployment_sequence(self) -> dict[str, Any]:
+        """Mechanical line chain: launch → mesh auto-join → post-landing BIT."""
+        if self.deployment is None:
+            return {"error": "deployment not enabled in mission profile"}
+        return self.deployment.full_deploy_sequence()
+
+    def deployment_summary(self) -> dict[str, Any]:
+        if self.deployment is None:
+            return {"enabled": False}
+        return {"enabled": True, **self.deployment.state.to_dict()}
 
     def process(self, event: SensorEvent) -> AlertFrame:
         duty_active = bool(event.flags.get("hardware_active_window", True))
@@ -77,6 +90,27 @@ class SentryGuardian:
             level = "HOLD"
             scored["level"] = level
             scored["rationale"] = "Enclosure tamper — hold-safe"
+
+        # Deployment lifecycle: suppress threat tiers until chain operational
+        if self.deployment is not None and self.deployment.alerts_suppressed():
+            dep_phase = self.deployment.guardian_state_label()
+            self._state = dep_phase
+            if level not in {"HOLD"}:
+                level = "CLEAR"
+                scored["level"] = level
+                scored["rationale"] = f"Deployment phase {dep_phase} — threat alerts suppressed"
+            alert = AlertFrame(
+                node_id=self.node_id,
+                seq=self._seq,
+                timestamp_s=ts,
+                level=level,
+                threat_score=float(scored["threat_score"]),
+                rationale=str(scored["rationale"]),
+                guardian_state=self._state,
+                sensor_event=event.to_dict(),
+            )
+            self._seq += 1
+            return alert
 
         if ts < self._cooldown_until and level in {"YELLOW", "ORANGE"}:
             level = self._last_level if self._last_level != "CLEAR" else "CLEAR"

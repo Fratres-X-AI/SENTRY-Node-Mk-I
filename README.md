@@ -15,6 +15,10 @@
 | [`docs/bom_dimensions.md`](docs/bom_dimensions.md) | Part sizes, masses, site totals |
 | [`docs/outputs_icd.md`](docs/outputs_icd.md) | All JSON outputs + file paths |
 | [`configs/deployment_site_alpha.json`](configs/deployment_site_alpha.json) | Example 4-node site (240×180 m) |
+| [`docs/BUILD_STAGE.md`](docs/BUILD_STAGE.md) | **Build gate** — software done vs physical bench (G1–G5) |
+| [`docs/build_assembly.md`](docs/build_assembly.md) | Step-by-step node assembly |
+| [`configs/procurement_bom.json`](configs/procurement_bom.json) | Frozen shopping list (~$216/node) |
+| [`docs/deployment_chain.md`](docs/deployment_chain.md) | Rapid chain deployment (mechanical, paper) |
 | [`docs/pi_deployment.md`](docs/pi_deployment.md) | Install & bench commands |
 | [`docs/risk_register.md`](docs/risk_register.md) | Blunt risks |
 
@@ -27,7 +31,7 @@
 | Guardian dwell-confirm + cooldown state machine | Implemented & Tested (synthetic) |
 | HMAC audit hash chain | Implemented & Tested (synthetic) |
 | JSON Schema + simulation V&V | Implemented & Tested (synthetic) |
-**Maturity:** v0.3.0 — Pi Zero 2 W drivers with simulation fallback; **not field-validated**
+**Maturity:** v0.4.0-build — software build gate PASS; **field gates G1–G5 need hardware**
 
 | Area | Status |
 |------|--------|

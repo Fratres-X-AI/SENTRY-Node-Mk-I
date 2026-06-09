@@ -1,6 +1,6 @@
 [project]
 name = "sentry"
-version = "0.3.0"
+version = "0.4.0-build"
 description = "SENTRY — passive Pi early-warning guardian node (Fratres X AI)"
 requires-python = ">=3.11"
 dependencies = []
@@ -30,6 +30,7 @@ sentry-guard = "sentry.cli:guard_main"
 sentry-sim = "sentry.cli:sim_main"
 sentry-stress = "sentry.simulation.stress_test:main"
 sentry-melt = "sentry.cli:melt_main"
+sentry-deploy = "sentry.cli:deploy_main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

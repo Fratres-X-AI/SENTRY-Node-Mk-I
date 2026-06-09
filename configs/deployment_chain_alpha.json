@@ -1,0 +1,37 @@
+{
+  "schema": "deployment_chain.v1",
+  "codename": "SENTRY",
+  "type_designation": "AN/GSQ-100(V)1",
+  "chain_id": "CHAIN-APPROACH-ALPHA",
+  "description": "Mechanical pneumatic line-thrower — 8-node approach-path sensor chain (paper exercise)",
+  "mode": "defensive-only",
+  "launch": {
+    "method": "pneumatic_soft",
+    "note": "No explosives. Line-charge reference mode available in sim for contrast only."
+  },
+  "deployment": {
+    "enabled": true,
+    "node_count": 8,
+    "spacing_m": 7.5,
+    "node_mass_kg": 0.25,
+    "line_diameter_mm": 3.0,
+    "launch_method": "pneumatic_soft",
+    "launch_velocity_m_s": 18.0,
+    "landing_angle_deg_std": 12.0,
+    "antenna_deploy_success_prior": 0.72,
+    "entanglement_prior_per_node": 0.08,
+    "require_post_landing_check": true,
+    "mesh_auto_join_timeout_s": 45.0
+  },
+  "constraints": {
+    "min_spacing_m": 5.0,
+    "max_spacing_m": 10.0,
+    "estimated_node_mass_g": 250,
+    "soldier_safety": "Deployment method must not add explosive hazard; detection must resume post-BIT"
+  },
+  "refused_methods": [
+    "line_charge_reference",
+    "rocket_propelled",
+    "explosive_line_charge"
+  ]
+}

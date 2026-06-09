@@ -72,6 +72,31 @@ def main() -> int:
     if not live_summary.get("frames"):
         ok = False
 
+    deployment_report: dict = {}
+    try:
+        from sentry.deployment.config import ChainDeploymentConfig
+        from sentry.deployment.manager import DeploymentManager
+        from sentry.deployment.monte_carlo_impact import gpu_monte_carlo_deployment
+
+        chain_cfg = json.loads((ROOT / "configs" / "deployment_chain_alpha.json").read_text(encoding="utf-8"))
+        dep = chain_cfg.get("deployment", {})
+        mgr = DeploymentManager(ChainDeploymentConfig.from_dict(dep), chain_cfg.get("chain_id", "CHAIN-AUDIT"))
+        deployment_report["sequence"] = mgr.full_deploy_sequence()
+        deployment_report["monte_carlo"] = gpu_monte_carlo_deployment(
+            total=5000,
+            config=ChainDeploymentConfig.from_dict(dep),
+        ).to_dict()
+        deployment_report["line_charge_reference"] = __import__(
+            "sentry.deployment.physics", fromlist=["simulate_line_deployment"]
+        ).simulate_line_deployment(
+            ChainDeploymentConfig.from_dict({**dep, "launch_method": "line_charge_reference"})
+        ).to_dict()
+        if deployment_report["line_charge_reference"].get("operational_nodes", 0) != 0:
+            ok = False
+    except Exception as exc:  # noqa: BLE001
+        deployment_report = {"error": str(exc)}
+        ok = False
+
     report = {
         "codename": "SENTRY",
         "type_designation": "AN/GSQ-100(V)1",
@@ -87,6 +112,7 @@ def main() -> int:
         "hardware_probe": probe_report,
         "failure_modes": failure_report,
         "live_ingest_smoke": live_summary,
+        "deployment_chain": deployment_report,
     }
     out_path = REPORTS / "defense-readiness-sentry.json"
     out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

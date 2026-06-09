@@ -1,0 +1,52 @@
+{
+  "schema": "procurement_bom.v1",
+  "codename": "SENTRY",
+  "type_designation": "AN/GSQ-100(V)1",
+  "kit_designation": "AN/GSQ-100A(V)1",
+  "version": "0.4.0-build",
+  "currency": "USD",
+  "notes": "Example SKUs — verify stock before order. Export screening required for international ship.",
+  "per_node": [
+    { "line": 1, "part": "Raspberry Pi Zero 2 W", "sku_class": "SC0510", "qty": 1, "unit_usd": 15, "source_hint": "rpilocator / approved reseller" },
+    { "line": 2, "part": "MicroSD 32GB A2", "sku_class": "SanDisk Ultra", "qty": 1, "unit_usd": 8, "source_hint": "Amazon / Best Buy" },
+    { "line": 3, "part": "RTL-SDR Blog V3", "sku_class": "RTL2832U R820T2", "qty": 1, "unit_usd": 40, "source_hint": "rtl-sdr.com" },
+    { "line": 4, "part": "USB MEMS microphone UAC1.0", "sku_class": "ReSpeaker / generic", "qty": 1, "unit_usd": 6, "source_hint": "Amazon" },
+    { "line": 5, "part": "HC-SR501 PIR module", "sku_class": "standard", "qty": 1, "unit_usd": 2, "source_hint": "Amazon / Adafruit" },
+    { "line": 6, "part": "LilyGO T-Beam v1.1 Meshtastic", "sku_class": "SX1262 868/915", "qty": 1, "unit_usd": 35, "source_hint": "LilyGO / Meshtastic vendor" },
+    { "line": 7, "part": "NC magnetic reed switch", "sku_class": "27mm glass", "qty": 1, "unit_usd": 1, "source_hint": "Amazon" },
+    { "line": 8, "part": "LiPo 2S 5000mAh flat", "sku_class": "7.4V XT30", "qty": 1, "unit_usd": 25, "source_hint": "Hobby shop — verify shipping regs" },
+    { "line": 9, "part": "5V 2.5A buck converter", "sku_class": "Pololu D24V22F5 class", "qty": 1, "unit_usd": 9, "source_hint": "Pololu / Amazon" },
+    { "line": 10, "part": "IP65 ABS enclosure", "sku_class": "165x135x85mm", "qty": 1, "unit_usd": 18, "source_hint": "Hammond 1591XX-class" },
+    { "line": 11, "part": "Pole + U-bolt kit", "sku_class": "50mm x 2.5m", "qty": 1, "unit_usd": 30, "source_hint": "Hardware store" },
+    { "line": 12, "part": "Powered USB OTG hub 4-port", "sku_class": "micro-B OTG", "qty": 1, "unit_usd": 12, "source_hint": "Amazon" },
+    { "line": 13, "part": "Cables glands standoffs desiccant", "sku_class": "misc kit", "qty": 1, "unit_usd": 15, "source_hint": "Amazon / local" }
+  ],
+  "per_node_subtotal_usd": 216,
+  "site_4_node": {
+    "full_nodes": 4,
+    "electronics_usd": 864,
+    "enclosures_usd": 72,
+    "poles_usd": 120,
+    "site_total_usd": 1056
+  },
+  "spares_kit": [
+    { "part": "Pi Zero 2 W", "qty": 1, "unit_usd": 15 },
+    { "part": "RTL-SDR V3", "qty": 1, "unit_usd": 40 },
+    { "part": "USB hub", "qty": 1, "unit_usd": 12 },
+    { "part": "LiPo 2S", "qty": 1, "unit_usd": 25 },
+    { "part": "MicroSD pre-flashed", "qty": 2, "unit_usd": 16 },
+    { "part": "Desiccant packs", "qty": 4, "unit_usd": 8 }
+  ],
+  "spares_subtotal_usd": 116,
+  "recommended_first_order": {
+    "description": "1 node bench + spares before 4-node site",
+    "qty_full_nodes": 1,
+    "include_spares": true,
+    "estimated_usd": 332
+  },
+  "test_equipment_bench": [
+    { "part": "2.4 GHz signal source / Wi-Fi AP", "note": "G2 RF test" },
+    { "part": "220 Hz tone speaker", "note": "G3 acoustic test" },
+    { "part": "Meshtastic phone app", "note": "G4 mesh verify" }
+  ]
+}
