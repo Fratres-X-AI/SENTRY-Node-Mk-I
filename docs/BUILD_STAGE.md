@@ -1,118 +1,122 @@
-# SENTRY Build Stage — Master Checklist
+# SENTRY Build Stage — Single Source of Truth
 
-**Type:** AN/GSQ-100(V)1 · **SENTRY Node Mk I** · **Version:** 0.4.0-build  
-**Date:** 7 June 2026 · **Mode:** Defensive-only
+**Type:** AN/GSQ-100(V)1 · **SENTRY Node Mk I** · **Version:** v0.4.0-build  
+**Mode:** Defensive-only · Receive-only
 
-This is the gate between **“idea in repo”** and **“soldering parts.”** Everything below marked **SOFTWARE** can be done without a bench. Everything marked **PHYSICAL** needs parts in hand.
+> This document governs the **entire build process**. If any other document conflicts with this one, **this document wins**. Read [`../HANDOFF_README.md`](../HANDOFF_README.md) first.
 
 ---
 
-## Where you are right now
+## 0. Who are you? (decision tree)
 
-| Layer | Status |
-|-------|--------|
-| Simulation + guardian + audit | **DONE** (G0 pass) |
-| Pi drivers + systemd + bootstrap | **DONE** (templates) |
-| Datasheet + BOM + ICD + risks | **DONE** |
-| Military designation | **DONE** (AN/GSQ-100(V)1) |
-| GitHub CI | **DONE** (main branch) |
-| Deployment chain (paper) | **DONE** (mechanical-only sim) |
-| **Build pack (this doc + procurement + assembly)** | **IN PROGRESS → DONE today** |
-| Bench validation G1–G5 | **NOT STARTED** (needs hardware) |
+```
+START
+  |
+  +-- Are you building the FIRST node ever (node 001)?
+  |     |
+  |     YES -> Go to PATH A (First Builder). Order 1 node + spares only.
+  |     |       Prove G1-G5 before buying more hardware.
+  |     |
+  |     NO  -> Are you building node 002, 003, or 004 (G1 already passed on 001)?
+  |             |
+  |             YES -> Go to PATH B (Replicate Node). Skip lab gates G2/G3;
+  |                     run G1 per node, then site-level G4 once all nodes are up.
+  |
+  +-- Are you ONLY changing software (no hardware)?
+        |
+        YES -> Go to PATH C (Software Only). Run build_readiness + CI. No parts needed.
+```
 
-**BLUNT:** You can **procure and assemble today**. You cannot **claim field-validated EW** until G1–G5 pass on real hardware.
+---
+
+## PATH A — First Builder (node 001)
+
+| # | Action | Command / Doc | Gate |
+|---|--------|---------------|------|
+| A1 | Read handoff + scope | [`../HANDOFF_README.md`](../HANDOFF_README.md) | — |
+| A2 | Order **1 node + spares** | [`../configs/procurement_bom.json`](../configs/procurement_bom.json) | — |
+| A3 | Flash SD card | [`sd_flash_checklist.md`](sd_flash_checklist.md) | — |
+| A4 | Assemble node | [`build_assembly.md`](build_assembly.md) | — |
+| A5 | Provision software | `sudo bash deploy/bootstrap_pi_zero.sh` | — |
+| A6 | **G1 hardware probe** | `sentry-guard --probe --node-config /etc/sentry/node_config.json` | **G1** |
+| A7 | RF burst test | `python validation/run_gate.py --gate G2` + emitter | **G2** |
+| A8 | Acoustic tone test | `python validation/run_gate.py --gate G3` + speaker | **G3** |
+| A9 | (Needs 2nd node) mesh relay | `python validation/run_gate.py --gate G4` | **G4** |
+| A10 | 8 h soak / power | `python validation/run_gate.py --gate G5 --soak-minutes 480` | **G5** |
+| A11 | Only after G1–G3 pass: order 3 more nodes | — | — |
+
+**STOP RULE:** Do not advance a gate until the previous one is `pass=true` (or manually confirmed for G2–G5). See [`gate_execution.md`](gate_execution.md).
+
+---
+
+## PATH B — Replicate Node (002+)
+
+Pre-condition: G1, G2, G3 already passed on node 001.
+
+| # | Action | Command / Doc |
+|---|--------|---------------|
+| B1 | Flash SD with node-specific hostname | [`sd_flash_checklist.md`](sd_flash_checklist.md) |
+| B2 | Assemble (identical to 001) | [`build_assembly.md`](build_assembly.md) |
+| B3 | Copy the matching node config | `sudo cp configs/nodes/sentry-pi-zero-00X.json /etc/sentry/node_config.json` |
+| B4 | **G1 per node** | `sentry-guard --probe --node-config /etc/sentry/node_config.json` |
+| B5 | After all nodes up: **site G4** | `python validation/run_gate.py --gate G4` |
+| B6 | Deploy per site manifest | [`../configs/deployment_site_alpha.json`](../configs/deployment_site_alpha.json) |
+
+You may skip re-running G2/G3 per node **only if** the BOM and assembly are identical to the validated node 001. Document any deviation.
+
+---
+
+## PATH C — Software Only (no parts)
+
+| # | Action | Command |
+|---|--------|---------|
+| C1 | Install dev deps | `pip install -e "implementation[dev]"` |
+| C2 | Run tests | `pytest implementation/tests/ -q -k "not gpu"` |
+| C3 | Software build gate | `python validation/build_readiness.py` |
+| C4 | Full audit | `python run_complete_audit.py` |
+| C5 | Push + confirm CI green | `git push origin main` |
+
+**RunPod:** Not required for any build path. RunPod is only for optional GPU Monte Carlo / stress reports (`validation/runpod/run_melt_pod.sh`). If you spin up a pod, tell the author/operator; otherwise skip it.
 
 ---
 
 ## Build stage definition (Fratres)
 
-**Build stage =** frozen BOM, frozen configs, flashable Pi image procedure, assembly order, 4-node site manifest, software tag, CI green, procurement list — **zero ambiguity for whoever buys parts.**
+**Build stage is COMPLETE (software) when:**
 
-**Not build stage:** shock tests, emitter lab, mesh soak in field, export counsel sign-off.
+- [x] G0/software gate passes locally and in CI (`validation/build_readiness.py`)
+- [x] Procurement BOM frozen with risk/qty/sourcing
+- [x] 4-node configs + site manifest frozen
+- [x] Assembly, flash, gate, and failure docs written for a non-author
+- [x] Tag `v0.4.0-build` pushed, CI green
 
----
+**Build stage is COMPLETE (physical) when:**
 
-## SOFTWARE — do today (no RunPod, no parts)
-
-| # | Task | Command / artifact | Status |
-|---|------|-------------------|--------|
-| S1 | Full test + audit | `python run_complete_audit.py` | Run before tag |
-| S2 | Build readiness gate | `python validation/build_readiness.py` | Added today |
-| S3 | 4-node configs | `configs/nodes/sentry-pi-zero-00X.json` | Added today |
-| S4 | Frozen procurement BOM | `configs/procurement_bom.json` | Added today |
-| S5 | Assembly procedure | `docs/build_assembly.md` | Added today |
-| S6 | SD flash checklist | `docs/sd_flash_checklist.md` | Added today |
-| S7 | Commit + push + CI green | `git push origin main` | Do after S1–S6 |
-| S8 | Git tag | `v0.4.0-build` | After CI green |
-
-### RunPod — do you need it?
-
-**No — not for build stage.**
-
-RunPod is only for **GPU Monte Carlo / melt reports** (already ran once on A100). Skip unless you want a fresh `gpu-stress-test.json` in the repo for HQ slides.
-
-If you want that anyway: spin **A100 or any CUDA pod**, run `bash validation/runpod/run_melt_pod.sh` (~5 min). **Tell me when the pod is up** and I’ll drive it.
+- [ ] G1 probe pass on node 001
+- [ ] G2 RF burst confirmed
+- [ ] G3 acoustic peak confirmed
+- [ ] G4 mesh ORANGE relay < 5 s (≥2 nodes)
+- [ ] G5 8 h soak, mean power < 5 W, no throttle
 
 ---
 
-## PHYSICAL — after you order parts (not today in software)
+## Acceptance gates (summary — full detail in `gate_execution.md`)
 
-| Gate | What | Parts needed | Est. time |
-|------|------|--------------|-----------|
-| **G1** | `sentry-guard --probe` all green on Pi | 1× full node BOM | 2 h assemble + flash |
-| **G2** | 2.4 GHz test emitter → RF alert | Node + cheap 2.4 GHz source | 1 h |
-| **G3** | 220 Hz speaker @ 5 m → acoustic peak | Node + speaker | 30 min |
-| **G4** | 4-node mesh ORANGE < 5 s | 4× nodes + Meshtastic app | 4 h |
-| **G5** | 8 h soak, P_avg < 5 W | 1× node + power meter optional | 8 h unattended |
-
-### Order this (4-node site + spares)
-
-See **`configs/procurement_bom.json`**. Round-number shopping:
-
-| Category | Qty | ~Cost |
-|----------|-----|-------|
-| Full node kits | 4 | ~$864 |
-| Spares kit | 1 | ~$120 |
-| Poles + mounts | 4 | ~$120 |
-| **Total first build** | — | **~$1,100** |
-
-Recommended: order **1 node first** for G1–G3, then duplicate ×3 after probe pass.
+| Gate | What it proves | Needs | Pass criteria |
+|------|----------------|-------|---------------|
+| **G1** | Hardware enumerates (BIT) | 1 node | All required adapters available on Pi |
+| **G2** | RF channel works | 2.4 GHz emitter | `rf_burst_2g4` appears when emitter on |
+| **G3** | Acoustic channel works | 220 Hz speaker | `acoustic_propeller_peak` appears with tone |
+| **G4** | Mesh relays alerts | ≥2 nodes | Peer receives ORANGE OMEN < 5 s |
+| **G5** | Power/thermal budget | 1 node, 8 h | Mean < 5 W, no thermal throttle |
 
 ---
 
-## Day-one physical workflow (when box arrives)
+## Known limitations carried into build (do not hide)
 
-```
-1. Flash SD (docs/sd_flash_checklist.md)
-2. Clone repo → bootstrap (docs/pi_deployment.md)
-3. sentry-guard --probe          → G1
-4. sentry-guard --live --duration 60
-5. python run_complete_audit.py  → G0 on Pi
-6. Lab emitter tests             → G2, G3
-7. Deploy 4 corners              → G4
-8. Overnight soak                → G5
-```
-
----
-
-## Known gaps (honest — do not hide at build)
-
-| Gap | Impact at build | Fix |
-|-----|-----------------|-----|
-| 5.8 GHz RF | Synthetic only | Accept for Mk I or add downconverter later |
-| Meshtastic RX | Spool placeholder | Alerts TX OK; peer RX manual via app |
-| Export counsel | Not signed | Block **international** ship until cleared |
-| Chain deployment | Paper sim only | Hand-emplace for Mk I |
-
----
-
-## Done = build stage complete when
-
-- [x] G0 software gate passes locally and on CI  
-- [x] Procurement BOM frozen  
-- [x] 4-node configs + site manifest frozen  
-- [x] Assembly + flash docs written  
-- [x] Tag `v0.4.0-build` pushed  
-- [ ] G1–G5 (physical — your bench week)
-
-**After tag:** open shopping cart, build node 001, run `--probe`.
+| Limitation | Action for builder |
+|------------|--------------------|
+| 5.8 GHz synthetic only | Accept for Mk I; never claim 5.8 GHz detection |
+| Meshtastic RX manual | Confirm inbound via Meshtastic phone app |
+| Chain deploy paper-only | Hand-emplace nodes (see `deployment_chain.md`) |
+| Export not cleared | Block international shipment until counsel sign-off |

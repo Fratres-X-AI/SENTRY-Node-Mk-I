@@ -51,9 +51,27 @@ def main() -> int:
     if proc.get("per_node_subtotal_usd", 0) < 100:
         print("BUILD READINESS: FAIL — procurement BOM looks incomplete")
         return 1
+    # v2 BOM: every per_node line must carry risk_notes + qty columns for handoff
+    for item in proc.get("per_node", []):
+        for required_field in ("risk_notes", "first_node_qty", "spare_qty", "preferred_source"):
+            if required_field not in item:
+                print(f"BUILD READINESS: FAIL — BOM line {item.get('line')} missing '{required_field}'")
+                return 1
     if len(site.get("nodes", [])) != 4:
         print("BUILD READINESS: FAIL — site manifest needs 4 nodes")
         return 1
+
+    # Handoff documents must exist for a non-author builder
+    handoff_docs = [
+        "HANDOFF_README.md",
+        "HANDOFF_CHECKLIST.md",
+        "docs/gate_execution.md",
+        "docs/known_first_build_failures.md",
+    ]
+    for rel in handoff_docs:
+        if not (ROOT / rel).exists():
+            print(f"BUILD READINESS: FAIL — missing handoff doc {rel}")
+            return 1
 
     # Node configs: simulation must be off for build templates
     for rel in REQUIRED_NODE_CONFIGS:

@@ -36,6 +36,80 @@ def _setup_logging(prefix: str = "SENTRY") -> None:
     )
 
 
+_GATE_REMEDIATION = {
+    "pir_gpio": [
+        "PIR OUT -> GPIO17 (pin 11), VCC -> 5V (pin 2), GND -> GND (pin 6).",
+        "Off-Pi this reports unavailable by design; run on the Pi.",
+        "sudo usermod -aG gpio $USER && sudo reboot",
+    ],
+    "acoustic_sensor": [
+        "sudo apt-get install -y portaudio19-dev && pip install -e 'implementation[hardware]'",
+        "Verify mic: arecord -l   (expect a USB card).",
+        "Replug mic into a powered hub port.",
+    ],
+    "rf_sensor": [
+        "sudo apt-get install -y rtl-sdr librtlsdr-dev",
+        "echo 'blacklist dvb_usb_rtl28xxu' | sudo tee /etc/modprobe.d/rtl-sdr-blacklist.conf && sudo reboot",
+        "rtl_test -t   (expect 'Found 1 device'). Use TCXO RTL-SDR Blog V3; clones fail.",
+    ],
+    "visual": ["Optional. If unused, ignore. Else check /dev/video0 and enable camera."],
+    "tamper_gpio": [
+        "Reed switch -> GPIO27 (pin 13) and GND; pull-up active-low. Run on the Pi.",
+    ],
+    "meshtastic_handler": [
+        "ls -l /dev/ttyACM* /dev/meshtastic   (expect the T-Beam serial device).",
+        "sudo cp deploy/99-sentry.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules && sudo udevadm trigger",
+        "Confirm SX1262 variant + Meshtastic firmware. sudo usermod -aG dialout $USER && sudo reboot",
+    ],
+}
+
+
+def _run_g1_report(node_config: dict) -> dict:
+    """G1 BIT: structured PASS/FAIL with remediation for every failed adapter."""
+    from sentry.hardware import is_raspberry_pi
+
+    report = probe_all(node_config)
+    required = {"pir_gpio", "acoustic_sensor", "rf_sensor", "tamper_gpio", "meshtastic_handler"}
+    failures = []
+    for adapter in report["adapters"]:
+        if adapter["adapter"] in required and not adapter["available"]:
+            failures.append(
+                {
+                    "adapter": adapter["adapter"],
+                    "detail": adapter["detail"],
+                    "remediation": _GATE_REMEDIATION.get(adapter["adapter"], ["Inspect adapter detail."]),
+                }
+            )
+    passed = len(failures) == 0 and is_raspberry_pi()
+    return {
+        "codename": "SENTRY",
+        "type_designation": "AN/GSQ-100(V)1",
+        "gate": "G1",
+        "name": "Hardware probe (BIT)",
+        "pi_detected": is_raspberry_pi(),
+        "available_count": report["available_count"],
+        "total_count": report["total_count"],
+        "required_adapters": sorted(required),
+        "adapters": report["adapters"],
+        "failures": failures,
+        "known_gaps": report["known_gaps"],
+        "pass": passed,
+        "pass_criteria": "All required adapters available AND running on Raspberry Pi hardware.",
+    }
+
+
+def _run_gate_stub(gate: str, node_config: dict, soak_minutes: float) -> dict:
+    """Delegate G2-G5 to validation/run_gate.py for full instructions."""
+    return {
+        "codename": "SENTRY",
+        "gate": gate,
+        "note": f"Run the full gate harness: python validation/run_gate.py --gate {gate}",
+        "see": "docs/gate_execution.md",
+        "pass": False,
+        "manual_confirm_required": True,
+    }
+
+
 def run_simulation(
     scenario_name: str,
     duration_s: float,
@@ -160,7 +234,9 @@ def guard_main() -> int:
     root = _repo_root()
     parser = argparse.ArgumentParser(description="SENTRY guardian — demo, probe, or live ingest")
     parser.add_argument("--demo", action="store_true", help="Run one intrusion sample")
-    parser.add_argument("--probe", action="store_true", help="Probe Pi hardware adapters")
+    parser.add_argument("--probe", action="store_true", help="Probe Pi hardware adapters (G1 BIT)")
+    parser.add_argument("--gate", choices=["G1", "G2", "G3", "G4", "G5"], help="Run a physical acceptance gate")
+    parser.add_argument("--soak-minutes", type=float, default=480.0, help="G5 soak duration")
     parser.add_argument("--live", action="store_true", help="Continuous live ingest with simulation fallback")
     parser.add_argument("--failure-modes", action="store_true", help="Run failure mode simulation suite")
     parser.add_argument("--duration", type=float, default=None, help="Live ingest duration (omit for service loop)")
@@ -173,11 +249,20 @@ def guard_main() -> int:
 
     _setup_logging()
 
+    if args.gate:
+        from sentry.hardware.probe import probe_all  # noqa: F401
+
+        gate = args.gate
+        node_config = _load_json(args.node_config)
+        report = _run_g1_report(node_config) if gate == "G1" else _run_gate_stub(gate, node_config, args.soak_minutes)
+        print(json.dumps(report, indent=2))
+        return 0 if report.get("pass") else 1
+
     if args.probe:
         node_config = _load_json(args.node_config)
-        report = probe_all(node_config)
+        report = _run_g1_report(node_config)
         print(json.dumps(report, indent=2))
-        return 0
+        return 0 if report.get("pass") else 1
 
     if args.failure_modes:
         report = run_failure_modes()

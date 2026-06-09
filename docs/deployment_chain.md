@@ -3,7 +3,42 @@
 **Codename:** SENTRY · **Type:** AN/GSQ-100(V)1 · **Date:** 7 June 2026  
 **Mode:** Defensive-only · **Mechanical line-thrower only — no explosives**
 
-Defense Projects HQ assessment response. This module models **rapid emplacement of a connected sensor chain** for approach-path/perimeter warning. It does **not** endorse MICLIC-style line-charge or rocket launch for COTS nodes.
+> **PAPER CONCEPT ONLY FOR Mk I. HAND EMPLACEMENT IS REQUIRED.**
+> No launched, thrown, or line-charge deployment is approved for the current COTS hardware.
+> The physics/Monte-Carlo modules in `implementation/src/sentry/deployment/` exist to **quantify why**
+> mechanical launch destroys COTS internals — not to authorize it. For Mk I, a soldier places each node by hand.
+
+---
+
+## 0. Hand-deployment procedure (the ONLY approved method for Mk I)
+
+For 2–4 nodes covering an approach path or perimeter:
+
+| Step | Action |
+|------|--------|
+| 1 | Confirm each node passed **G1** (and the reference node passed G2/G3). |
+| 2 | Power each node and confirm boot (ACT LED) before walking out. |
+| 3 | Emplace nodes **by hand** at **5–10 m spacing** (default **7.5 m**) along the line to watch. |
+| 4 | Mount at **2.0 m AGL** on a pole/stake; PIR aimed 15° outward/down. |
+| 5 | Keep RTL and LoRa antennas vertical and **≥150 mm apart**. |
+| 6 | Maintain **line-of-sight** between mesh neighbors where possible (LoRa tolerates some obstruction). |
+| 7 | Label each node; record GPS in the site manifest (`configs/deployment_site_alpha.json`). |
+| 8 | Run **G4** to confirm a peer receives an ORANGE OMEN within 5 s. |
+
+**Mesh formation (2–4 nodes):**
+
+- All nodes share one `lora.region`, channel name `SENTRY`, and PSK.
+- Node roles in the manifest: `corner`, `gate`, `relay`. A central `relay` improves connectivity.
+- There is **no auto-launch self-organization** in Mk I — topology is whatever you physically place plus the peer list in each node config.
+- Inbound RX confirmation is **manual via the Meshtastic phone app** (Mk I limitation).
+
+**Spacing quick reference:**
+
+| Nodes | Layout | Spacing | Coverage (approx.) |
+|-------|--------|---------|--------------------|
+| 2 | Line | 7.5 m | Short approach lane |
+| 3 | L / arc | 7.5–10 m | Corner + lane |
+| 4 | Rectangle + center relay | 7.5 m | ~240 × 180 m perimeter (datasheet §8) |
 
 ---
 

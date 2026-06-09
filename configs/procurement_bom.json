@@ -1,27 +1,105 @@
 {
-  "schema": "procurement_bom.v1",
+  "schema": "procurement_bom.v2",
   "codename": "SENTRY",
   "type_designation": "AN/GSQ-100(V)1",
   "kit_designation": "AN/GSQ-100A(V)1",
   "version": "0.4.0-build",
   "currency": "USD",
-  "notes": "Example SKUs — verify stock before order. Export screening required for international ship.",
+  "audience": "Builder who is not the original developer. Heed every risk_notes field.",
+  "sourcing_reliability": {
+    "DigiKey/Mouser": "Most reliable for passives, buck, connectors. Authentic parts, traceable. Higher cost.",
+    "Amazon": "Fast, OK for Pi/enclosure/hub/PIR. Watch for counterfeit RTL-SDR and fake SD cards.",
+    "AliExpress": "Cheapest, slowest, highest counterfeit risk. Acceptable for non-critical mechanicals; AVOID for RTL-SDR and SD cards.",
+    "Vendor-direct": "Use rtl-sdr.com (RTL-SDR Blog V3) and LilyGO/Meshtastic vendors for radios."
+  },
+  "columns": ["line", "part", "sku_class", "first_node_qty", "spare_qty", "unit_usd", "risk_notes", "preferred_source"],
   "per_node": [
-    { "line": 1, "part": "Raspberry Pi Zero 2 W", "sku_class": "SC0510", "qty": 1, "unit_usd": 15, "source_hint": "rpilocator / approved reseller" },
-    { "line": 2, "part": "MicroSD 32GB A2", "sku_class": "SanDisk Ultra", "qty": 1, "unit_usd": 8, "source_hint": "Amazon / Best Buy" },
-    { "line": 3, "part": "RTL-SDR Blog V3", "sku_class": "RTL2832U R820T2", "qty": 1, "unit_usd": 40, "source_hint": "rtl-sdr.com" },
-    { "line": 4, "part": "USB MEMS microphone UAC1.0", "sku_class": "ReSpeaker / generic", "qty": 1, "unit_usd": 6, "source_hint": "Amazon" },
-    { "line": 5, "part": "HC-SR501 PIR module", "sku_class": "standard", "qty": 1, "unit_usd": 2, "source_hint": "Amazon / Adafruit" },
-    { "line": 6, "part": "LilyGO T-Beam v1.1 Meshtastic", "sku_class": "SX1262 868/915", "qty": 1, "unit_usd": 35, "source_hint": "LilyGO / Meshtastic vendor" },
-    { "line": 7, "part": "NC magnetic reed switch", "sku_class": "27mm glass", "qty": 1, "unit_usd": 1, "source_hint": "Amazon" },
-    { "line": 8, "part": "LiPo 2S 5000mAh flat", "sku_class": "7.4V XT30", "qty": 1, "unit_usd": 25, "source_hint": "Hobby shop — verify shipping regs" },
-    { "line": 9, "part": "5V 2.5A buck converter", "sku_class": "Pololu D24V22F5 class", "qty": 1, "unit_usd": 9, "source_hint": "Pololu / Amazon" },
-    { "line": 10, "part": "IP65 ABS enclosure", "sku_class": "165x135x85mm", "qty": 1, "unit_usd": 18, "source_hint": "Hammond 1591XX-class" },
-    { "line": 11, "part": "Pole + U-bolt kit", "sku_class": "50mm x 2.5m", "qty": 1, "unit_usd": 30, "source_hint": "Hardware store" },
-    { "line": 12, "part": "Powered USB OTG hub 4-port", "sku_class": "micro-B OTG", "qty": 1, "unit_usd": 12, "source_hint": "Amazon" },
-    { "line": 13, "part": "Cables glands standoffs desiccant", "sku_class": "misc kit", "qty": 1, "unit_usd": 15, "source_hint": "Amazon / local" }
+    {
+      "line": 1, "part": "Raspberry Pi Zero 2 W", "sku_class": "SC0510",
+      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 15,
+      "risk_notes": "Genuine only. 512MB RAM — duty cycle is mandatory or it will OOM under RTL+FFT. Frequent stock shortages; use rpilocator.",
+      "preferred_source": "Approved reseller / rpilocator"
+    },
+    {
+      "line": 2, "part": "MicroSD 32GB A2", "sku_class": "SanDisk Ultra/Extreme",
+      "first_node_qty": 1, "spare_qty": 2, "unit_usd": 8,
+      "risk_notes": "Counterfeit cards are common on Amazon/AliExpress — buy from a reputable seller and verify capacity with f3/h2testw before deploy. A2 endurance matters for logging.",
+      "preferred_source": "DigiKey / reputable retailer"
+    },
+    {
+      "line": 3, "part": "RTL-SDR Blog V3 (TCXO)", "sku_class": "RTL2832U + R820T2 + TCXO",
+      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 40,
+      "risk_notes": "MUST be the TCXO RTL-SDR Blog V3. Cheap non-TCXO clones drift and FAIL G2 spectrum sweeps. Buy from rtl-sdr.com to avoid clones. Cannot tune 5.8 GHz (hard limit).",
+      "preferred_source": "rtl-sdr.com (vendor-direct)"
+    },
+    {
+      "line": 4, "part": "USB MEMS microphone (UAC1.0)", "sku_class": "ReSpeaker / generic UAC",
+      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 6,
+      "risk_notes": "Must be UAC1.0 class (driverless). Some 'gaming' mics need drivers and will not enumerate with arecord. Confirm 16 kHz capable.",
+      "preferred_source": "Amazon / Seeed (ReSpeaker)"
+    },
+    {
+      "line": 5, "part": "HC-SR501 PIR module", "sku_class": "standard",
+      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 2,
+      "risk_notes": "OUT pin is 3.3V (safe for GPIO). Set retrigger jumper to H (repeat). Two trim pots (sensitivity/time) need field tuning. Cheap clones vary — buy a few.",
+      "preferred_source": "Amazon / AliExpress (low risk)"
+    },
+    {
+      "line": 6, "part": "LilyGO T-Beam (SX1262)", "sku_class": "T-Beam v1.1 SX1262",
+      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 35,
+      "risk_notes": "CONFIRM SX1262 variant (NOT SX1276) for Meshtastic. Verify correct frequency band for your legal region (868 EU / 915 US). Never power without antenna attached. Comes in CP210x serial — needs udev rule.",
+      "preferred_source": "LilyGO official / Meshtastic vendor"
+    },
+    {
+      "line": 7, "part": "NC magnetic reed switch", "sku_class": "27mm glass reed + magnet",
+      "first_node_qty": 1, "spare_qty": 2, "unit_usd": 1,
+      "risk_notes": "Glass reeds are fragile — order spares. Must align with lid magnet so reed is CLOSED when lid shut (else constant tamper HOLD).",
+      "preferred_source": "DigiKey / Amazon"
+    },
+    {
+      "line": 8, "part": "LiPo 2S 5000mAh flat", "sku_class": "7.4V XT30, with protection",
+      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 25,
+      "risk_notes": "7.4V nominal (8.4V full) — MUST go through buck to 5V; direct connection destroys Pi. Prefer a pack with protection circuit. SHIPPING RESTRICTED (air freight rules); source locally where possible. Do not puncture.",
+      "preferred_source": "Local hobby shop (shipping regs)"
+    },
+    {
+      "line": 9, "part": "5V 2.5A buck converter", "sku_class": "Pololu D24V22F5 class",
+      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 9,
+      "risk_notes": "Rate >=2.5A continuous. Verify 5.0V at OUT with a meter BEFORE connecting Pi. Cheap modules sag under RTL load and cause brownout reboots. Pololu is reliable.",
+      "preferred_source": "Pololu / DigiKey"
+    },
+    {
+      "line": 10, "part": "IP65 ABS enclosure", "sku_class": "165x135x85mm (or 150x120x90mm)",
+      "first_node_qty": 1, "spare_qty": 0, "unit_usd": 18,
+      "risk_notes": "165x135x85 has 0mm stack margin — if lid won't close, use 150x120x90mm. Needs 2x M16 glands. Hammond 1591XX-class.",
+      "preferred_source": "DigiKey / Mouser (Hammond)"
+    },
+    {
+      "line": 11, "part": "Pole + U-bolt kit", "sku_class": "50mm x 2.5m + U-bolt",
+      "first_node_qty": 1, "spare_qty": 0, "unit_usd": 30,
+      "risk_notes": "Non-critical mechanical. Galvanized for outdoor. Confirm U-bolt fits 50mm OD.",
+      "preferred_source": "Hardware store"
+    },
+    {
+      "line": 12, "part": "Powered USB OTG hub (4-port)", "sku_class": "micro-B OTG, externally powered",
+      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 12,
+      "risk_notes": "MUST be powered (RTL+mic+radio exceed Pi Zero USB current). Confirm micro-B OTG uplink. Some 'OTG' hubs back-power the Pi incorrectly — test power path.",
+      "preferred_source": "Amazon"
+    },
+    {
+      "line": 13, "part": "Cables/glands/standoffs/desiccant/fuse", "sku_class": "misc kit",
+      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 15,
+      "risk_notes": "Include 3A inline fuse holder for LiPo, M3x12 standoffs, M16 glands, 22AWG silicone wire, Dupont jumpers, desiccant packs.",
+      "preferred_source": "Amazon / DigiKey"
+    }
   ],
   "per_node_subtotal_usd": 216,
+  "first_order_recommendation": {
+    "description": "ONE node + spares. Prove G1-G3 before buying 3 more.",
+    "full_nodes": 1,
+    "include_spares": true,
+    "estimated_usd": 332
+  },
   "site_4_node": {
     "full_nodes": 4,
     "electronics_usd": 864,
@@ -29,24 +107,19 @@
     "poles_usd": 120,
     "site_total_usd": 1056
   },
-  "spares_kit": [
-    { "part": "Pi Zero 2 W", "qty": 1, "unit_usd": 15 },
-    { "part": "RTL-SDR V3", "qty": 1, "unit_usd": 40 },
-    { "part": "USB hub", "qty": 1, "unit_usd": 12 },
-    { "part": "LiPo 2S", "qty": 1, "unit_usd": 25 },
-    { "part": "MicroSD pre-flashed", "qty": 2, "unit_usd": 16 },
-    { "part": "Desiccant packs", "qty": 4, "unit_usd": 8 }
-  ],
-  "spares_subtotal_usd": 116,
-  "recommended_first_order": {
-    "description": "1 node bench + spares before 4-node site",
-    "qty_full_nodes": 1,
-    "include_spares": true,
-    "estimated_usd": 332
+  "spares_kit_summary": {
+    "items": ["Pi Zero 2 W x1", "RTL-SDR V3 TCXO x1", "USB hub x1", "LiPo 2S x1", "MicroSD pre-flashed x2", "reed x2", "PIR x1", "desiccant x4"],
+    "estimated_usd": 132
   },
-  "test_equipment_bench": [
-    { "part": "2.4 GHz signal source / Wi-Fi AP", "note": "G2 RF test" },
-    { "part": "220 Hz tone speaker", "note": "G3 acoustic test" },
-    { "part": "Meshtastic phone app", "note": "G4 mesh verify" }
-  ]
+  "bench_test_equipment": [
+    { "part": "2.4 GHz source (Wi-Fi AP or phone hotspot)", "for_gate": "G2", "risk_notes": "Must actively transmit data during test." },
+    { "part": "220 Hz tone speaker / phone app", "for_gate": "G3", "risk_notes": "Steady tone, moderate volume, ~5 m." },
+    { "part": "Meshtastic phone app (paired)", "for_gate": "G4", "risk_notes": "Required to confirm inbound RX (Mk I RX is manual)." },
+    { "part": "Digital multimeter", "for_gate": "assembly", "risk_notes": "Mandatory for power-on voltage checks." },
+    { "part": "USB inline power meter (optional)", "for_gate": "G5", "risk_notes": "Helps confirm <5W budget." }
+  ],
+  "compliance": {
+    "export_itar": "International shipment/sale requires export screening sign-off — see docs/export_screening.md.",
+    "rf_regulatory": "Meshtastic LoRa region must match local RF law before powering antennas."
+  }
 }
