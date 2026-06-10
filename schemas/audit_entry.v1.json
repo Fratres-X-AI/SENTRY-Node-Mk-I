@@ -3,7 +3,7 @@
   "$id": "https://github.com/Fratres-X-AI/fratres-sentry/schemas/audit_entry.v1.json",
   "title": "SENTRY audit_entry.v1",
   "type": "object",
-  "required": ["schema", "seq", "timestamp_s", "event", "payload_hash", "prev_hash", "entry_hash"],
+  "required": ["schema", "seq", "timestamp_s", "event", "payload_hash", "prev_hash", "entry_hash", "entry_integrity_hash"],
   "properties": {
     "schema": { "const": "audit_entry.v1" },
     "codename": { "const": "SENTRY" },
@@ -12,7 +12,8 @@
     "event": { "type": "string", "minLength": 1 },
     "payload_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "prev_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
-    "entry_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+    "entry_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "entry_integrity_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
   },
   "additionalProperties": false
 }

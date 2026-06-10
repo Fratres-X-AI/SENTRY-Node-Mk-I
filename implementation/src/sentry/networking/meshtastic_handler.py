@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
 from sentry.hardware import adapter_status
+from sentry.networking.p2p_mesh import build_intel_summary
 
 LOG = logging.getLogger("SENTRY")
 
@@ -37,6 +39,7 @@ class MeshtasticHandler:
         self._iface = None
         self._available = False
         self._subs: list[Callable[[dict[str, Any]], None]] = []
+        self._hold_mode = False
         self._connect()
 
     def _connect(self) -> None:
@@ -73,7 +76,7 @@ class MeshtasticHandler:
             self._iface = None
 
     def _omen_payload(self, alert: dict[str, Any]) -> dict[str, Any]:
-        return {
+        payload = {
             "schema": "omen_alert.v1",
             "codename": "SENTRY",
             "node_id": alert.get("node_id"),
@@ -83,8 +86,29 @@ class MeshtasticHandler:
             "timestamp_s": alert.get("timestamp_s"),
             "mesh_from": self.config.local.node_id,
         }
+        if alert.get("sensor_event"):
+            payload["intel"] = build_intel_summary(alert)
+        return payload
+
+    def set_hold_mode(self, enabled: bool) -> None:
+        self._hold_mode = enabled
 
     def send_alert(self, alert: dict[str, Any]) -> bool:
+        if self._hold_mode or alert.get("level") == "HOLD":
+            self._spool_write(
+                self.config.receive_spool,
+                json.dumps(
+                    {
+                        "event": "mesh_tx_suppressed",
+                        "reason": "hold_safe",
+                        "timestamp_s": time.time(),
+                        "seq": alert.get("seq"),
+                        "level": alert.get("level"),
+                    },
+                    separators=(",", ":"),
+                ),
+            )
+            return False
         payload = self._omen_payload(alert)
         text = json.dumps(payload, separators=(",", ":"))
         if len(text.encode("utf-8")) > self.config.local.max_payload_bytes:

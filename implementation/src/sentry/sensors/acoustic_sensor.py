@@ -49,13 +49,13 @@ def _fft_peaks(samples: list[float], sample_rate_hz: int, cfg: AcousticSensorCon
         band_spec = spectrum[mask]
         band_freqs = freqs[mask]
         peak_idx = int(np.argmax(band_spec))
-        peak_freq = float(band_freqs[peak_idx])
+        fallback_peak_freq = float(band_freqs[peak_idx])
         total = float(spectrum.sum()) + 1e-12
         score = clamp01(float(band_spec[peak_idx]) / total * 4.0)
         return AcousticReadResult(
             score,
-            100.0 <= peak_freq <= 500.0 and score > 0.25,
-            peak_freq,
+            100.0 <= fallback_peak_freq <= 500.0 and score > 0.25,
+            fallback_peak_freq,
             1,
             "numpy_fallback",
         )
@@ -80,7 +80,7 @@ def _fft_peaks(samples: list[float], sample_rate_hz: int, cfg: AcousticSensorCon
     if score > 0.4 and len(peaks) == 0:
         score *= cfg.wind_reject_ratio
 
-    peak_freq = float(band_freqs[int(peaks[0])]) if len(peaks) else None
+    peak_freq: float | None = float(band_freqs[int(peaks[0])]) if len(peaks) else None
     propeller = peak_freq is not None and 100.0 <= peak_freq <= 500.0 and len(peaks) <= 4
 
     return AcousticReadResult(score, propeller, peak_freq, len(peaks), "scipy")

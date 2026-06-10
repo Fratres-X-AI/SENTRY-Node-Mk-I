@@ -17,7 +17,9 @@ jobs:
       - name: Install package
         run: pip install -e "./implementation[dev]"
       - name: Pytest
-        run: pytest implementation/tests/ -q -k "not gpu"
+        run: pytest implementation/tests/ --cov=sentry --cov-fail-under=100 -q -k "not gpu"
+      - name: Mypy
+        run: mypy implementation/src/sentry
       - name: Simulation smoke
         run: python validation/vv/run_sentry_simulation.py
       - name: Build readiness (software gate)

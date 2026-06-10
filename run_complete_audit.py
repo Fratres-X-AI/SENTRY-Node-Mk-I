@@ -16,10 +16,27 @@ sys.path.insert(0, str(SRC))
 from sentry.failure_modes import run_all as run_failure_modes  # noqa: E402
 from sentry.hardware.probe import probe_all  # noqa: E402
 from sentry.ingest import run_live_ingest  # noqa: E402
+from sentry.audit import AuditLogger, load_jsonl_entries  # noqa: E402
 
 REPORTS = ROOT / "validation" / "reports"
 SCENARIOS = ["benign", "intrusion", "jamming", "low_visibility"]
 ENV = {**os.environ, "PYTHONPATH": str(SRC)}
+
+
+def _tamper_detection_check(path: Path) -> dict:
+    entries = load_jsonl_entries(path)
+    if not entries:
+        return {"path": str(path), "passed": False, "detail": "no audit entries to tamper"}
+    original = path.read_text(encoding="utf-8")
+    tampered_path = REPORTS / "tampered_audit_probe.jsonl"
+    tampered = original.replace("a", "b", 1) if "a" in original else original[:-2] + "0\n"
+    tampered_path.write_text(tampered, encoding="utf-8")
+    try:
+        tampered_entries = load_jsonl_entries(tampered_path)
+        valid = AuditLogger().verify_chain(tampered_entries)
+    except Exception:
+        valid = False
+    return {"path": str(path), "tampered_path": str(tampered_path), "passed": not valid}
 
 
 def main() -> int:
@@ -52,6 +69,16 @@ def main() -> int:
         if not passed:
             ok = False
         results.append({"scenario": scenario, "status": "PASS" if passed else "FAIL", **summary})
+
+    audit_paths = [Path(r.get("audit_path", "")) for r in results if r.get("audit_path")]
+    tamper_report = {"passed": False, "detail": "no populated audit files"}
+    for audit_path in audit_paths:
+        if audit_path.exists() and audit_path.stat().st_size > 1:
+            tamper_report = _tamper_detection_check(audit_path)
+            if tamper_report.get("passed"):
+                break
+    if not tamper_report.get("passed"):
+        ok = False
 
     node_config = json.loads((ROOT / "configs" / "sentry_node_config.json").read_text(encoding="utf-8"))
     mission = json.loads((ROOT / "configs" / "sentry_mission_profile.json").read_text(encoding="utf-8"))
@@ -103,7 +130,7 @@ def main() -> int:
         "common_name": "SENTRY Node Mk I",
         "role_descriptor": "Passive Multi-Sensor Early-Warning Node (PMSEWN)",
         "project": "SENTRY-Node-Mk-I",
-        "version": "0.3.0",
+        "version": "0.5.0-darkspace-integrated",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "mode": "defensive-only",
         "hardware_profile": "raspberry-pi-zero-2-w",
@@ -111,6 +138,7 @@ def main() -> int:
         "scenarios": results,
         "hardware_probe": probe_report,
         "failure_modes": failure_report,
+        "tamper_detection": tamper_report,
         "live_ingest_smoke": live_summary,
         "deployment_chain": deployment_report,
     }

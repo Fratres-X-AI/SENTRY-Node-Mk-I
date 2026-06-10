@@ -51,6 +51,28 @@
     "log_path": "validation/reports/sentry_power.jsonl",
     "target_avg_watts": 5.0
   },
+  "audit": {
+    "sqlite_path": "validation/reports/audit_log.db",
+    "max_rows": 10000
+  },
+  "darkspace": {
+    "ghost_monitor": {
+      "enabled": true,
+      "sample_interval_s": 30.0,
+      "window": 12,
+      "min_delta_bytes": 512.0
+    },
+    "whisper_detector": {
+      "enabled": true,
+      "entropy_threshold": 4.5,
+      "min_text_len": 80,
+      "max_lines": 50
+    },
+    "whisper_log_paths": [
+      "validation/reports/sentry_live_alerts.jsonl",
+      "validation/reports/sentry_live_audit.jsonl"
+    ]
+  },
   "tamper_response": {
     "dry_run": true,
     "wipe_env_keys": ["SENTRY_AUDIT_HMAC_KEY"],

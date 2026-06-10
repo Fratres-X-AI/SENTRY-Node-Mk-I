@@ -8,7 +8,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-from sentry.audit import AuditLogger
+from sentry.audit import AuditLogger, AuditStore, AuditStoreConfig
 from sentry.guardian import SentryGuardian
 from sentry.hardware.live_array import LiveSensorArray
 from sentry.sensors.power_metrics import PowerMetrics, PowerMetricsConfig
@@ -37,6 +37,13 @@ def run_live_ingest(
     )
     guardian = SentryGuardian(node_id, mission, power_metrics=power)
     audit = AuditLogger()
+    audit_cfg = node_config.get("audit", {})
+    store = AuditStore(
+        AuditStoreConfig(
+            path=Path(audit_cfg.get("sqlite_path", output_dir / "audit_log.db" if output_dir else "validation/reports/audit_log.db")),
+            max_rows=int(audit_cfg.get("max_rows", 10_000)),
+        )
+    )
     array = LiveSensorArray(node_id, node_config)
     mesh = array.relay
 
@@ -70,20 +77,25 @@ def run_live_ingest(
 
             alert = guardian.process(event)
             alert_dict = alert.to_dict()
+            store.append("alert", alert_dict, timestamp_s=event.timestamp_s)
 
             if validate_schemas:
                 validate(alert_dict, "alert_frame.v1.json")
 
-            entry = audit.append("alert", alert_dict, timestamp_s=event.timestamp_s)
-            if validate_schemas:
-                validate(entry, "audit_entry.v1.json")
+            entry = None
+            if alert.level in {"ORANGE", "RED", "HOLD"} or event.flags.get("tamper_detected"):
+                entry = audit.append("alert", alert_dict, timestamp_s=event.timestamp_s)
+                if validate_schemas:
+                    validate(entry, "audit_entry.v1.json")
 
             with alerts_path.open("a", encoding="utf-8") as fh:
                 fh.write(json.dumps(alert_dict) + "\n")
-            with audit_path.open("a", encoding="utf-8") as fh:
-                fh.write(json.dumps(entry) + "\n")
+            if entry is not None:
+                with audit_path.open("a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(entry) + "\n")
 
-            if alert.level in {"ORANGE", "RED", "HOLD"}:
+            mesh.set_hold_mode(alert.level == "HOLD")
+            if alert.level in {"ORANGE", "RED"}:
                 mesh.send_alert(alert_dict)
 
             if rank[alert.level] > rank[max_level]:
@@ -110,6 +122,7 @@ def run_live_ingest(
         "fallback": fallback,
         "power": power_summary,
         "mesh": mesh.relay_peer_summary(),
+        "sqlite_path": str(store.config.path),
         "alerts_path": str(alerts_path),
         "audit_path": str(audit_path),
     }

@@ -3,7 +3,7 @@
   "codename": "SENTRY",
   "type_designation": "AN/GSQ-100(V)1",
   "kit_designation": "AN/GSQ-100A(V)1",
-  "version": "0.4.0-build",
+  "version": "0.5.0-darkspace-integrated",
   "currency": "USD",
   "audience": "Builder who is not the original developer. Heed every risk_notes field.",
   "sourcing_reliability": {
@@ -12,18 +12,24 @@
     "AliExpress": "Cheapest, slowest, highest counterfeit risk. Acceptable for non-critical mechanicals; AVOID for RTL-SDR and SD cards.",
     "Vendor-direct": "Use rtl-sdr.com (RTL-SDR Blog V3) and LilyGO/Meshtastic vendors for radios."
   },
+  "operational_constraints": {
+    "ram_budget": "Pi Zero 2 W has 512MB RAM. SENTRY-DARKSPACE idle target is <60% RAM (~300MB); systemd MemoryMax is 400M.",
+    "worst_case_power_w": 4.45,
+    "worst_case_runtime_h": 8.3,
+    "storage_lifespan": "At 10% ORANGE duty, expected critical JSONL + SQLite growth is under 1GB over six months; use high-endurance microSD for sustained alerts."
+  },
   "columns": ["line", "part", "sku_class", "first_node_qty", "spare_qty", "unit_usd", "risk_notes", "preferred_source"],
   "per_node": [
     {
       "line": 1, "part": "Raspberry Pi Zero 2 W", "sku_class": "SC0510",
       "first_node_qty": 1, "spare_qty": 1, "unit_usd": 15,
-      "risk_notes": "Genuine only. 512MB RAM — duty cycle is mandatory or it will OOM under RTL+FFT. Frequent stock shortages; use rpilocator.",
+      "risk_notes": "Genuine only. 512MB RAM — duty cycle is mandatory or it will OOM under RTL+FFT plus DARKSPACE passive tasks. Keep idle RAM under 60% and enforce MemoryMax=400M. Frequent stock shortages; use rpilocator.",
       "preferred_source": "Approved reseller / rpilocator"
     },
     {
       "line": 2, "part": "MicroSD 32GB A2", "sku_class": "SanDisk Ultra/Extreme",
       "first_node_qty": 1, "spare_qty": 2, "unit_usd": 8,
-      "risk_notes": "Counterfeit cards are common on Amazon/AliExpress — buy from a reputable seller and verify capacity with f3/h2testw before deploy. A2 endurance matters for logging.",
+      "risk_notes": "Counterfeit cards are common on Amazon/AliExpress — buy from a reputable seller and verify capacity with f3/h2testw before deploy. A2/high-endurance matters for SQLite WAL and HMAC logging.",
       "preferred_source": "DigiKey / reputable retailer"
     },
     {
@@ -91,6 +97,12 @@
       "first_node_qty": 1, "spare_qty": 1, "unit_usd": 15,
       "risk_notes": "Include 3A inline fuse holder for LiPo, M3x12 standoffs, M16 glands, 22AWG silicone wire, Dupont jumpers, desiccant packs.",
       "preferred_source": "Amazon / DigiKey"
+    },
+    {
+      "line": 14, "part": "High-endurance MicroSD option", "sku_class": "32GB+ endurance-rated",
+      "first_node_qty": 0, "spare_qty": 1, "unit_usd": 10,
+      "risk_notes": "Use when expected ORANGE duty exceeds 10% or when SQLite WAL logging remains enabled for multi-month deployments.",
+      "preferred_source": "DigiKey / reputable retailer"
     }
   ],
   "per_node_subtotal_usd": 216,
@@ -98,7 +110,7 @@
     "description": "ONE node + spares. Prove G1-G3 before buying 3 more.",
     "full_nodes": 1,
     "include_spares": true,
-    "estimated_usd": 332
+    "estimated_usd": 342
   },
   "site_4_node": {
     "full_nodes": 4,
@@ -108,8 +120,8 @@
     "site_total_usd": 1056
   },
   "spares_kit_summary": {
-    "items": ["Pi Zero 2 W x1", "RTL-SDR V3 TCXO x1", "USB hub x1", "LiPo 2S x1", "MicroSD pre-flashed x2", "reed x2", "PIR x1", "desiccant x4"],
-    "estimated_usd": 132
+    "items": ["Pi Zero 2 W x1", "RTL-SDR V3 TCXO x1", "USB hub x1", "LiPo 2S x1", "MicroSD pre-flashed x2", "high-endurance microSD x1", "reed x2", "PIR x1", "desiccant x4"],
+    "estimated_usd": 142
   },
   "bench_test_equipment": [
     { "part": "2.4 GHz source (Wi-Fi AP or phone hotspot)", "for_gate": "G2", "risk_notes": "Must actively transmit data during test." },

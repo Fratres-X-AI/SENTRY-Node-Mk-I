@@ -33,7 +33,7 @@ def friis_max_range_m(
     wavelength_m = 299_792_458.0 / frequency_hz
     max_path_loss = tx_power_dbm + tx_gain_dbi + rx_gain_dbi - rx_sensitivity_dbm
     exponent = max_path_loss / 20.0
-    return wavelength_m / (4.0 * math.pi) * (10.0**exponent)
+    return float(wavelength_m / (4.0 * math.pi) * (10.0**exponent))
 
 
 def rtl_power_anomaly_score(

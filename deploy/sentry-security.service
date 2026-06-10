@@ -1,0 +1,15 @@
+[Unit]
+Description=SENTRY-DARKSPACE pre-boot integrity and memory shield
+Before=sentry-guardian.service
+ConditionPathExists=/opt/sentry-node-mk-i/deploy/firmware_integrity.py
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/sentry-node-mk-i
+EnvironmentFile=/etc/sentry/environment
+ExecStart=/usr/bin/python3 deploy/firmware_integrity.py
+RemainAfterExit=yes
+
+[Install]
+RequiredBy=sentry-guardian.service

@@ -40,8 +40,9 @@ class VisualAdapter:
 
     def __init__(self, config: VisualConfig | None = None) -> None:
         self.config = config or VisualConfig()
-        self._cap = None
-        self._prev = None
+        self._cap: Any | None = None
+        self._prev: Any | None = None
+        self._cv2: Any | None = None
         self._available = False
         try:
             import cv2
@@ -71,11 +72,13 @@ class VisualAdapter:
         ok, frame = self._cap.read()
         if not ok:
             return 0.0
-        gray = self._cv2.cvtColor(frame, self._cv2.COLOR_BGR2GRAY)
+        cv2 = self._cv2
+        assert cv2 is not None
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         if self._prev is None:
             self._prev = gray
             return 0.0
-        diff = self._cv2.absdiff(gray, self._prev)
+        diff = cv2.absdiff(gray, self._prev)
         self._prev = gray
         mean_diff = float(diff.mean()) / 255.0
         return clamp01(mean_diff * 4.0)

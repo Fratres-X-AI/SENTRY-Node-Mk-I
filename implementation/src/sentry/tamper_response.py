@@ -13,6 +13,29 @@ from sentry.audit import AuditLogger
 LOG = logging.getLogger("SENTRY")
 
 
+def _zero_fill(path: Path) -> None:
+    size = path.stat().st_size
+    with path.open("r+b") as fh:
+        remaining = size
+        chunk = b"\x00" * 8192
+        while remaining > 0:
+            n = min(remaining, len(chunk))
+            fh.write(chunk[:n])
+            remaining -= n
+        fh.flush()
+        os.fsync(fh.fileno())
+
+
+def _scrub_env(key: str) -> bool:
+    if key not in os.environ:
+        return False
+    value = os.environ.get(key, "")
+    if value:
+        os.environ[key] = "0" * len(value)
+    del os.environ[key]
+    return True
+
+
 @dataclass
 class TamperWipeConfig:
     wipe_env_keys: list[str] = field(default_factory=lambda: ["SENTRY_AUDIT_HMAC_KEY"])
@@ -41,16 +64,16 @@ def handle_tamper(
         LOG.warning("SENTRY tamper dry-run — would wipe secrets")
         return {"audit_entry": entry, "wiped": wiped, "dry_run": True}
 
+    audit.wipe_secret()
     for key in cfg.wipe_env_keys:
-        if key in os.environ:
-            del os.environ[key]
+        if _scrub_env(key):
             wiped.append(f"env:{key}")
 
     for raw in cfg.wipe_paths:
         path = Path(raw)
         try:
             if path.is_file():
-                path.write_bytes(b"\x00" * min(path.stat().st_size, 4096))
+                _zero_fill(path)
                 path.unlink(missing_ok=True)
                 wiped.append(str(path))
         except OSError as exc:

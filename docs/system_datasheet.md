@@ -201,6 +201,52 @@ With occasional mesh TX (5 % of active frames): **~2.0 W average** — under **5
 
 With 10 W solar panel (6 h effective sun): indefinite daytime + overnight buffer — **paper design only; measure on bench**.
 
+### 6.4 Worst-case power with DARKSPACE passive tasks
+
+This is the no-duty-cycle failure case: CPU saturated, RTL-SDR running continuously, Meshtastic transmitting at maximum power, and SQLite/psutil background tasks enabled.
+
+| Component | Conservative draw |
+|-----------|-------------------|
+| Pi Zero 2 W at 100 % CPU | 2.5 W |
+| RTL-SDR continuous sweep | +0.55 W |
+| USB MEMS acoustic FFT | +0.25 W |
+| SX1262 LoRa TX at max power | +1.0 W |
+| DARKSPACE psutil + SQLite tasks | +0.15 W |
+| **Worst-case total** | **4.45 W** |
+
+Battery capacity: `2S 5000 mAh × 7.4 V = 37 Wh`.
+
+```
+37 Wh / 4.45 W = 8.3 h worst-case runtime
+```
+
+The default duty cycle remains mandatory. The software target is <60 % idle RAM on the Pi Zero 2 W and `MemoryMax=400M` under systemd.
+
+### 6.5 Storage lifespan during ORANGE alerts
+
+Assumptions: live ingest at 0.5 Hz, ORANGE state active 10 % of the hour, one SQLite event per frame, and HMAC JSONL flush for critical alerts.
+
+```
+0.5 frames/s × 3600 s/h × 0.10 × 2 writes = 360 critical writes/h
+360 writes/h × 500 bytes ≈ 180 KB/h
+180 KB/h × 24 × 180 days ≈ 760 MB over six months
+```
+
+A genuine 32 GB A2 micro-SD card with multi-TB write endurance is acceptable for six months at this alert rate. SQLite WAL checkpointing and bounded row retention reduce write amplification; sustained ORANGE duty above 10 % should use a high-endurance card.
+
+### 6.6 SITE-ALPHA mesh link budget
+
+The site rectangle is 240 m × 180 m, so the corner-to-corner diagonal is 300 m.
+
+Using free-space path loss at 915 MHz:
+
+```
+FSPL = 20log10(300 m) + 20log10(915 MHz) - 27.55 = 81.2 dB
+Rx = 22 dBm TX + 2 dBi TX + 2 dBi RX - 81.2 dB = -55.2 dBm
+```
+
+With 15-25 dB loss for trees, wet foliage, or light wall penetration, received power is approximately -70 to -80 dBm. SX1262 LoRa sensitivity at conservative spreading factors is roughly -125 to -130 dBm, leaving more than 45 dB of link margin at the longest site path. Field G4 still must verify this with installed antennas and local regulatory power settings.
+
 ---
 
 ## 7. RF & acoustic detection (paper performance)

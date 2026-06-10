@@ -47,7 +47,9 @@ class SimulatedSensorArray:
 
     def sample(self, timestamp_s: float) -> SensorEvent:
         s = self.scenario
-        noise = lambda scale: self._rng.uniform(-scale, scale)
+
+        def noise(scale: float) -> float:
+            return self._rng.uniform(-scale, scale)
 
         intrusion = 0.0
         if s.intrusion_start_s is not None and s.intrusion_peak_s is not None:

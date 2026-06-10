@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Iterator
 
 from sentry.hardware.pir import PirAdapter, PirConfig
@@ -12,7 +13,9 @@ from sentry.hardware.tamper import TamperAdapter, TamperConfig
 from sentry.hardware.visual import VisualAdapter, VisualConfig
 from sentry.networking.meshtastic_handler import MeshNodeConfig, MeshtasticHandler, MeshtasticHandlerConfig
 from sentry.sensors.acoustic_sensor import AcousticSensor, AcousticSensorConfig
+from sentry.sensors.ghost_monitor import GhostMonitor, GhostMonitorConfig
 from sentry.sensors.rf_sensor import RfBandConfig, RfSensor, RfSensorConfig
+from sentry.sensors.whisper_detector import WhisperDetector, WhisperDetectorConfig
 from sentry.simulation.synthetic import SimulatedSensorArray, scenario_from_name
 from sentry.types import SensorChannels, SensorEvent
 
@@ -67,6 +70,10 @@ class LiveSensorArray:
         self.rf = RfSensor(_build_rf_config(hw))
         self.visual = VisualAdapter(VisualConfig(**hw.get("visual", {})))
         self.tamper = TamperAdapter(TamperConfig(**hw.get("tamper", {})))
+        darkspace_cfg = node_config.get("darkspace", {})
+        self.ghost = GhostMonitor(GhostMonitorConfig(**darkspace_cfg.get("ghost_monitor", {})))
+        self.whisper = WhisperDetector(WhisperDetectorConfig(**darkspace_cfg.get("whisper_detector", {})))
+        self._whisper_paths = [str(p) for p in darkspace_cfg.get("whisper_log_paths", [])]
 
         mesh_cfg = hw.get("meshtastic", {})
         mesh_local = {k: v for k, v in mesh_cfg.items() if k not in ("peers", "fallback_spool")}
@@ -127,6 +134,19 @@ class LiveSensorArray:
 
         visual = float(self.visual.read()) if (active and self.visual.available) else sim.channels.visual
         tampered = self.tamper.read() if self.tamper.available else False
+        ghost = self.ghost.sample(force=not active)
+        whisper_score = 0.0
+        whisper_flags: dict[str, Any] = {
+            "steganography_suspected": False,
+            "whisper_entropy": 0.0,
+            "whisper_detector_detail": "not scanned",
+        }
+        for raw_path in self._whisper_paths:
+            whisper = self.whisper.scan_jsonl(Path(raw_path))
+            if whisper.score > whisper_score:
+                whisper_score = whisper.score
+                whisper_flags = whisper.flags()
+        passive_score = min(1.0, float(ghost.score) + whisper_score)
 
         flags = {
             "jamming_suspected": rf_result.jamming,
@@ -138,6 +158,9 @@ class LiveSensorArray:
             "acoustic_propeller_peak": propeller_peak,
             "rf_source": rf_result.source,
             "fallback_channels": self.fallback_report(),
+            "passive_score": passive_score,
+            **ghost.flags(),
+            **whisper_flags,
         }
 
         event = SensorEvent(

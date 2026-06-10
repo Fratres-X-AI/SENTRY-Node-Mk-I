@@ -5,12 +5,12 @@ from __future__ import annotations
 import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 try:
     import jsonschema
 except ImportError:  # pragma: no cover - optional at runtime
-    jsonschema = None  # type: ignore[assignment]
+    jsonschema = None
 
 
 def repo_root() -> Path:
@@ -20,7 +20,7 @@ def repo_root() -> Path:
 @lru_cache(maxsize=8)
 def load_schema(name: str) -> dict[str, Any]:
     path = repo_root() / "schemas" / name
-    return json.loads(path.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
 
 
 def validate(instance: dict[str, Any], schema_name: str) -> None:

@@ -79,6 +79,18 @@
       "tx_power_dbm": 20,
       "distance_m": 300,
       "estimated_rx_dbm": -72
+    },
+    "mesh_link_budget_915mhz": {
+      "max_site_diagonal_m": 300,
+      "tx_power_dbm": 22,
+      "tx_gain_dbi": 2,
+      "rx_gain_dbi": 2,
+      "free_space_rx_dbm": -55.2,
+      "foliage_wall_loss_db": { "low": 15, "high": 25 },
+      "obstructed_rx_dbm": { "low_loss": -70.2, "high_loss": -80.2 },
+      "sx1262_sensitivity_dbm": -130,
+      "minimum_margin_db": 49.8,
+      "recommendation": "Use SF9-SF11 for tree cover and verify with G4 mesh soak."
     }
   },
   "acoustic_planning": {

@@ -7,8 +7,9 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Any
 
-from sentry.audit import AuditLogger
+from sentry.audit import AuditLogger, AuditStore, AuditStoreConfig
 from sentry.failure_modes import run_all as run_failure_modes
 from sentry.guardian import SentryGuardian
 from sentry.hardware.probe import probe_all
@@ -20,8 +21,11 @@ from sentry.simulation.synthetic import SimulatedSensorArray, scenario_from_name
 LOG = logging.getLogger("SENTRY")
 
 
-def _load_json(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
+def _load_json(path: Path) -> dict[str, Any]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"{path} must contain a JSON object")
+    return data
 
 
 def _repo_root() -> Path:
@@ -64,7 +68,7 @@ _GATE_REMEDIATION = {
 }
 
 
-def _run_g1_report(node_config: dict) -> dict:
+def _run_g1_report(node_config: dict[str, Any]) -> dict[str, Any]:
     """G1 BIT: structured PASS/FAIL with remediation for every failed adapter."""
     from sentry.hardware import is_raspberry_pi
 
@@ -98,7 +102,7 @@ def _run_g1_report(node_config: dict) -> dict:
     }
 
 
-def _run_gate_stub(gate: str, node_config: dict, soak_minutes: float) -> dict:
+def _run_gate_stub(gate: str, node_config: dict[str, Any], soak_minutes: float) -> dict[str, Any]:
     """Delegate G2-G5 to validation/run_gate.py for full instructions."""
     return {
         "codename": "SENTRY",
@@ -119,10 +123,11 @@ def run_simulation(
     output_dir: Path,
     seed: int,
     validate_schemas: bool = True,
-) -> dict:
+) -> dict[str, Any]:
     mission = _load_json(mission_path)
     guardian = SentryGuardian(node_id, mission)
     audit = AuditLogger()
+    store = AuditStore(AuditStoreConfig(path=output_dir / f"sentry_sim_{scenario_name}.db"))
     scenario = scenario_from_name(scenario_name)
     sensors = SimulatedSensorArray(node_id, scenario, rng_seed=seed)
     power = PowerMetrics(PowerMetricsConfig(target_avg_watts=5.0))
@@ -131,8 +136,8 @@ def run_simulation(
     alerts_path = output_dir / f"sentry_sim_{scenario_name}.jsonl"
     audit_path = output_dir / f"sentry_audit_{scenario_name}.jsonl"
 
-    alert_rows: list[dict] = []
-    audit_rows: list[dict] = []
+    alert_rows: list[dict[str, Any]] = []
+    audit_rows: list[dict[str, Any]] = []
     max_level = "CLEAR"
     level_rank = {"CLEAR": 0, "YELLOW": 1, "ORANGE": 2, "RED": 3, "HOLD": 4}
 
@@ -144,15 +149,19 @@ def run_simulation(
 
         alert = guardian.process(event)
         alert_dict = alert.to_dict()
+        store.append("alert", alert_dict, timestamp_s=event.timestamp_s)
         if validate_schemas:
             validate(alert_dict, "alert_frame.v1.json")
 
-        audit_entry = audit.append("alert", alert_dict, timestamp_s=event.timestamp_s)
-        if validate_schemas:
-            validate(audit_entry, "audit_entry.v1.json")
+        audit_entry = None
+        if alert.level in {"ORANGE", "RED", "HOLD"}:
+            audit_entry = audit.append("alert", alert_dict, timestamp_s=event.timestamp_s)
+            if validate_schemas:
+                validate(audit_entry, "audit_entry.v1.json")
 
         alert_rows.append(alert_dict)
-        audit_rows.append(audit_entry)
+        if audit_entry is not None:
+            audit_rows.append(audit_entry)
 
         if level_rank[alert.level] > level_rank[max_level]:
             max_level = alert.level
@@ -168,9 +177,8 @@ def run_simulation(
     alerts_path.write_text(
         "\n".join(json.dumps(r) for r in alert_rows) + "\n", encoding="utf-8"
     )
-    audit_path.write_text(
-        "\n".join(json.dumps(r) for r in audit_rows) + "\n", encoding="utf-8"
-    )
+    audit_text = "\n".join(json.dumps(r) for r in audit_rows)
+    audit_path.write_text((audit_text + "\n") if audit_text else "", encoding="utf-8")
 
     chain_ok = audit.verify_chain(audit_rows)
     summary = {
@@ -179,6 +187,7 @@ def run_simulation(
         "frames": len(alert_rows),
         "max_level": max_level,
         "audit_chain_valid": chain_ok,
+        "sqlite_path": str(store.config.path),
         "power": power.summary(),
         "alerts_path": str(alerts_path),
         "audit_path": str(audit_path),
@@ -330,7 +339,7 @@ def deploy_main() -> int:
     guardian = SentryGuardian("sentry-chain-000", mission)
     audit = AuditLogger()
 
-    report: dict = {
+    report: dict[str, Any] = {
         "codename": "SENTRY",
         "type_designation": cfg_data.get("type_designation", "AN/GSQ-100(V)1"),
         "chain_id": chain_id,

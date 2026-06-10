@@ -18,10 +18,18 @@
     "pir_weight": 0.30,
     "acoustic_weight": 0.25,
     "rf_weight": 0.20,
-    "visual_weight": 0.25
+    "visual_weight": 0.25,
+    "passive_weight": 0.10
+  },
+  "darkspace": {
+    "enabled": true,
+    "ghost_sample_interval_s": 30.0,
+    "whisper_entropy_threshold": 4.5,
+    "passive_score_bump": 0.20
   },
   "audit": {
     "hmac_secret_env": "SENTRY_AUDIT_HMAC_KEY",
-    "chain_file": "validation/reports/audit_chain.jsonl"
+    "chain_file": "validation/reports/audit_chain.jsonl",
+    "sqlite_path": "validation/reports/audit_log.db"
   }
 }

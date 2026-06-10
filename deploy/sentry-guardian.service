@@ -1,7 +1,7 @@
 [Unit]
 Description=SENTRY passive early-warning guardian (Fratres X AI)
 Documentation=file:/opt/sentry-node-mk-i/docs/pi_deployment.md
-After=network.target sound.target
+After=network.target sound.target sentry-security.service
 Wants=network-online.target
 
 [Service]
@@ -9,7 +9,7 @@ Type=simple
 User=sentry
 Group=sentry
 WorkingDirectory=/opt/sentry-node-mk-i
-Environment=SENTRY_AUDIT_HMAC_KEY=REPLACE_ME
+EnvironmentFile=/etc/sentry/environment
 Environment=PYTHONUNBUFFERED=1
 ExecStart=/opt/sentry-node-mk-i/.venv/bin/sentry-guard --live --rate-hz 0.5 --node-config /etc/sentry/node_config.json --mission /etc/sentry/mission_profile.json
 Restart=on-failure

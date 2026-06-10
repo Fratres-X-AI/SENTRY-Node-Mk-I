@@ -24,12 +24,15 @@ class SensorFusion:
         w_ac = float(self.weights.get("acoustic_weight", 0.25))
         w_rf = float(self.weights.get("rf_weight", 0.20))
         w_vis = float(self.weights.get("visual_weight", 0.25))
+        w_passive = float(self.weights.get("passive_weight", 0.10))
+        passive_score = float(event.flags.get("passive_score", 0.0))
 
         fused_score = (
             w_pir * ch.pir
             + w_ac * ch.acoustic
             + w_rf * ch.rf
             + w_vis * ch.visual
+            + w_passive * passive_score
         )
 
         if event.flags.get("low_visibility"):
@@ -45,6 +48,7 @@ class SensorFusion:
                 "acoustic": w_ac * ch.acoustic,
                 "rf": w_rf * ch.rf,
                 "visual": w_vis * ch.visual,
+                "passive": w_passive * passive_score,
             },
             "flags": dict(event.flags),
         }

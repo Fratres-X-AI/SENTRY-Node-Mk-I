@@ -89,9 +89,9 @@ def simulate_low_power_duty_cycle() -> FailureResult:
     array._cycle_start = __import__("time").monotonic() - 5.0
     sleep_event = array.sample(0.0)
     array.close()
-    passed = active_event.flags.get("hardware_active_window") and not sleep_event.flags.get(
+    passed = bool(active_event.flags.get("hardware_active_window")) and not bool(sleep_event.flags.get(
         "hardware_active_window"
-    )
+    ))
     return FailureResult(
         "low_power_duty_cycle",
         passed,

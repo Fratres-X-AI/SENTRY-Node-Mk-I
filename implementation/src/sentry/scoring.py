@@ -48,6 +48,13 @@ class ThreatScorer:
             level = "CLEAR"
             rationale = "Baseline passive watch — no elevated threat"
 
+        if flags.get("steganography_suspected") and level == "CLEAR":
+            level = "YELLOW"
+            rationale = "DARKSPACE whisper entropy anomaly — early warning YELLOW"
+        if flags.get("passive_network_anomaly") and threat_score >= thresholds.yellow and level in {"CLEAR", "YELLOW"}:
+            level = "ORANGE"
+            rationale = "DARKSPACE passive network anomaly with elevated score — early warning ORANGE"
+
         return {
             "threat_score": threat_score,
             "level": level,
