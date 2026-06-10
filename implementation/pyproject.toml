@@ -85,6 +85,8 @@ module = [
   "cv2",
   "scipy",
   "scipy.*",
+  "torch",
+  "torch.*",
 ]
 ignore_missing_imports = true
 
