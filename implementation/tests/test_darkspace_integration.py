@@ -19,7 +19,8 @@ def test_audit_detects_single_character_tamper() -> None:
     entries = [audit.append("boot", {"node": "a"}), audit.append("alert", {"level": "RED"})]
     assert audit.verify_chain(entries)
     tampered = [dict(row) for row in entries]
-    tampered[1]["entry_hash"] = "0" + tampered[1]["entry_hash"][1:]
+    first = "1" if tampered[1]["entry_hash"][0] == "0" else "0"
+    tampered[1]["entry_hash"] = first + tampered[1]["entry_hash"][1:]
     assert not audit.verify_chain(tampered)
 
 
