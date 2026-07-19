@@ -2,7 +2,7 @@
 
 SENTRY is an open-source, defensive early-warning node for a Raspberry Pi Zero 2 W. In plain terms: it is a small weatherproof sensor box that listens for motion, sound, radio activity, tamper events, and lightweight network anomalies. It turns those signals into a simple alert level, writes tamper-evident local records, and can relay short low-power LoRa alerts so a human can investigate.
 
-SENTRY does not jam, target, engage, or automate any response. It is a passive monitoring and audit system.
+SENTRY does not jam, target, engage, or automate any response. Its sensors are passive; the only intended transmission is short, low-power LoRa alert text for human review.
 
 ## Status
 
@@ -56,7 +56,7 @@ flowchart LR
 
 ## Important Limits
 
-- RTL-SDR Blog V4 is not a native 5.8 GHz receiver. The 5.8 GHz path is synthetic until a suitable front-end is added.
+- RTL-SDR Blog V4 is not a native 2.4 GHz or 5.8 GHz receiver. Treat 2.4 GHz as a bench-proven conversion path and 5.8 GHz as synthetic until a suitable front-end is added.
 - Field false-positive and false-negative rates are not proven until G1-G5 hardware testing is complete.
 - Mesh receive is currently a conservative spool/manual integration path.
 - `tamper_response.dry_run` defaults to `true`; destructive wipe behavior must be explicitly enabled.

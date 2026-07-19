@@ -4,6 +4,8 @@ import json
 import os
 from pathlib import Path
 
+import pytest
+
 from sentry.audit import AuditLogger, AuditStore, AuditStoreConfig
 from sentry.chaos import ChaosStreamParser
 from sentry.networking.meshtastic_handler import MeshtasticHandler, MeshtasticHandlerConfig, MeshNodeConfig
@@ -80,6 +82,15 @@ def test_p2p_summary_signature(monkeypatch) -> None:
     assert verify_summary(summary)
     summary["level"] = "RED"
     assert not verify_summary(summary)
+
+
+def test_p2p_summary_requires_strong_production_key(monkeypatch) -> None:
+    monkeypatch.setenv("SENTRY_ENV", "production")
+    monkeypatch.delenv("SENTRY_MESH_SIGN_KEY", raising=False)
+    monkeypatch.setenv("SENTRY_AUDIT_HMAC_KEY", "short")
+
+    with pytest.raises(RuntimeError, match="production mesh signing key"):
+        build_intel_summary({"node_id": "n", "level": "ORANGE", "threat_score": 0.7})
 
 
 def test_meshtastic_hold_suppresses_tx(tmp_path: Path) -> None:

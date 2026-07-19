@@ -1,7 +1,7 @@
 # SENTRY — Raspberry Pi Zero 2 W Deployment
 
 **Codename:** SENTRY · **Version:** 0.5.0-darkspace-integrated · **Mode:** Defensive-only
-**Type designation:** **AN/GSQ-100(V)1** · SENTRY Node Mk I · PMSEWN (receive-only)
+**Type designation:** **AN/GSQ-100(V)1** · SENTRY Node Mk I · PMSEWN (passive sensing + LoRa alert relay)
 
 Full BOM, bootstrap, systemd, and test commands for field bench. See also [`risk_register.md`](risk_register.md) and [`export_screening.md`](export_screening.md).
 

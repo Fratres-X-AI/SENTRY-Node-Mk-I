@@ -10,10 +10,10 @@
 | **Common name** | **SENTRY Node Mk I** |
 | **Role descriptor** | Passive Multi-Sensor Early-Warning Node (PMSEWN) |
 | **Class** | Unattended ground sensor (UGS) / perimeter warning |
-| **Emit mode** | Receive-only — no EW transmit, no engage |
+| **Emit mode** | Sensors are receive-only; LoRa emits short alert text only; no EW transmit, no engage |
 | **4-node kit** | **AN/GSQ-100A(V)1** — SENTRY Net (4-pack) |
 
-> **Briefing line:** AN/GSQ-100(V)1 SENTRY — passive ground early-warning node; PIR + acoustic + RF receive fusion; LoRa mesh alert relay; **no emit, no engage**.
+> **Briefing line:** AN/GSQ-100(V)1 SENTRY — passive ground early-warning node; PIR + acoustic + RF receive fusion; low-power LoRa alert relay; **no jamming, no targeting, no engage**.
 
 **Note:** NSN, LIN, and formal program-of-record numbers are assigned by cataloging authority at fielding — not by Fratres.
 
@@ -37,7 +37,7 @@ Optional mesh gateway split (future): **AN/GSC-10(V)1** — SENTRY Mesh Gateway.
 
 A **SENTRY node** is a pole-mounted, IP65-enclosed Raspberry Pi Zero 2 W that:
 
-1. Listens (never transmits EW countermeasures)
+1. Listens with passive sensors and never transmits EW countermeasures
 2. Fuses PIR + acoustic + RF + optional visual motion
 3. Scores threat as CLEAR / YELLOW / ORANGE / RED / HOLD
 4. Logs tamper-evident audit chain (HMAC)

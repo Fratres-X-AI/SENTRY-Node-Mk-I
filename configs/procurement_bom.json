@@ -15,7 +15,7 @@
     },
     {
       "component": "RTL-SDR Blog V4 Dongle",
-      "purpose": "Passive RF sensor (2.4 GHz + 5.8 GHz spectrum monitoring)",
+      "purpose": "Passive RF sensor for bench-proven sub-GHz/GHz monitoring; 2.4 GHz requires conversion path and 5.8 GHz requires future front-end",
       "unit_cost": 35.00,
       "quantity_per_node": 1,
       "total_quantity": 4

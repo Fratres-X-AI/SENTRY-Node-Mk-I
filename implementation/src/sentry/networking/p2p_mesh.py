@@ -14,8 +14,8 @@ def _mesh_secret() -> bytes:
     raw = os.environ.get("SENTRY_MESH_SIGN_KEY") or os.environ.get("SENTRY_AUDIT_HMAC_KEY")
     if raw is None:
         raw = "sentry-dev-key"
-    if os.environ.get("SENTRY_ENV", "").lower() == "production" and raw == "sentry-dev-key":
-        raise RuntimeError("default mesh signing key is not allowed in production")
+    if os.environ.get("SENTRY_ENV", "").lower() == "production" and (raw == "sentry-dev-key" or len(raw) < 32):
+        raise RuntimeError("production mesh signing key must be set and at least 32 characters")
     return raw.encode("utf-8")
 
 

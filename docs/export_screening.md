@@ -5,7 +5,7 @@
 
 ## Scope
 
-SENTRY v0.5.0-darkspace-integrated is a **receive-only** passive sensing stack:
+SENTRY v0.5.0-darkspace-integrated is a **passive sensing stack** with one low-power alert relay:
 
 | Component | Transmit? | Notes |
 |-----------|-----------|-------|
