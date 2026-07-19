@@ -1,137 +1,99 @@
 {
-  "schema": "procurement_bom.v2",
-  "codename": "SENTRY",
-  "type_designation": "AN/GSQ-100(V)1",
-  "kit_designation": "AN/GSQ-100A(V)1",
+  "system_designation": "AN/GSQ-100A(V)1",
+  "codename": "SENTRY Net (4-Pack)",
   "version": "0.5.0-darkspace-integrated",
+  "target_cost_per_node": 216.00,
+  "site_total_nodes": 4,
   "currency": "USD",
-  "audience": "Builder who is not the original developer. Heed every risk_notes field.",
-  "sourcing_reliability": {
-    "DigiKey/Mouser": "Most reliable for passives, buck, connectors. Authentic parts, traceable. Higher cost.",
-    "Amazon": "Fast, OK for Pi/enclosure/hub/PIR. Watch for counterfeit RTL-SDR and fake SD cards.",
-    "AliExpress": "Cheapest, slowest, highest counterfeit risk. Acceptable for non-critical mechanicals; AVOID for RTL-SDR and SD cards.",
-    "Vendor-direct": "Use rtl-sdr.com (RTL-SDR Blog V3) and LilyGO/Meshtastic vendors for radios."
-  },
-  "operational_constraints": {
-    "ram_budget": "Pi Zero 2 W has 512MB RAM. SENTRY-DARKSPACE idle target is <60% RAM (~300MB); systemd MemoryMax is 400M.",
-    "worst_case_power_w": 4.45,
-    "worst_case_runtime_h": 8.3,
-    "storage_lifespan": "At 10% ORANGE duty, expected critical JSONL + SQLite growth is under 1GB over six months; use high-endurance microSD for sustained alerts."
-  },
-  "columns": ["line", "part", "sku_class", "first_node_qty", "spare_qty", "unit_usd", "risk_notes", "preferred_source"],
-  "per_node": [
+  "bom": [
     {
-      "line": 1, "part": "Raspberry Pi Zero 2 W", "sku_class": "SC0510",
-      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 15,
-      "risk_notes": "Genuine only. 512MB RAM — duty cycle is mandatory or it will OOM under RTL+FFT plus DARKSPACE passive tasks. Keep idle RAM under 60% and enforce MemoryMax=400M. Frequent stock shortages; use rpilocator.",
-      "preferred_source": "Approved reseller / rpilocator"
+      "component": "Raspberry Pi Zero 2 W",
+      "purpose": "Core compute unit (4 Cores, 512MB RAM)",
+      "unit_cost": 15.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 2, "part": "MicroSD 32GB A2", "sku_class": "SanDisk Ultra/Extreme",
-      "first_node_qty": 1, "spare_qty": 2, "unit_usd": 8,
-      "risk_notes": "Counterfeit cards are common on Amazon/AliExpress — buy from a reputable seller and verify capacity with f3/h2testw before deploy. A2/high-endurance matters for SQLite WAL and HMAC logging.",
-      "preferred_source": "DigiKey / reputable retailer"
+      "component": "RTL-SDR Blog V4 Dongle",
+      "purpose": "Passive RF sensor (2.4 GHz + 5.8 GHz spectrum monitoring)",
+      "unit_cost": 35.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 3, "part": "RTL-SDR Blog V3 (TCXO)", "sku_class": "RTL2832U + R820T2 + TCXO",
-      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 40,
-      "risk_notes": "MUST be the TCXO RTL-SDR Blog V3. Cheap non-TCXO clones drift and FAIL G2 spectrum sweeps. Buy from rtl-sdr.com to avoid clones. Cannot tune 5.8 GHz (hard limit).",
-      "preferred_source": "rtl-sdr.com (vendor-direct)"
+      "component": "USB Mini Microphone",
+      "purpose": "Passive acoustic sensor (SciPy FFT 100-500 Hz captures)",
+      "unit_cost": 8.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 4, "part": "USB MEMS microphone (UAC1.0)", "sku_class": "ReSpeaker / generic UAC",
-      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 6,
-      "risk_notes": "Must be UAC1.0 class (driverless). Some 'gaming' mics need drivers and will not enumerate with arecord. Confirm 16 kHz capable.",
-      "preferred_source": "Amazon / Seeed (ReSpeaker)"
+      "component": "Waveshare LoRa HAT (915MHz)",
+      "purpose": "Meshtastic OMEN mesh relay hardware module",
+      "unit_cost": 22.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 5, "part": "HC-SR501 PIR module", "sku_class": "standard",
-      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 2,
-      "risk_notes": "OUT pin is 3.3V (safe for GPIO). Set retrigger jumper to H (repeat). Two trim pots (sensitivity/time) need field tuning. Cheap clones vary — buy a few.",
-      "preferred_source": "Amazon / AliExpress (low risk)"
+      "component": "SanDisk Industrial 32GB MicroSD",
+      "purpose": "High-endurance storage to prevent SQLite write burnout",
+      "unit_cost": 12.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 6, "part": "LilyGO T-Beam (SX1262)", "sku_class": "T-Beam v1.1 SX1262",
-      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 35,
-      "risk_notes": "CONFIRM SX1262 variant (NOT SX1276) for Meshtastic. Verify correct frequency band for your legal region (868 EU / 915 US). Never power without antenna attached. Comes in CP210x serial — needs udev rule.",
-      "preferred_source": "LilyGO official / Meshtastic vendor"
+      "component": "Anker PowerCore 10000mAh Battery",
+      "purpose": "Bounded power cell validated against power math",
+      "unit_cost": 26.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 7, "part": "NC magnetic reed switch", "sku_class": "27mm glass reed + magnet",
-      "first_node_qty": 1, "spare_qty": 2, "unit_usd": 1,
-      "risk_notes": "Glass reeds are fragile — order spares. Must align with lid magnet so reed is CLOSED when lid shut (else constant tamper HOLD).",
-      "preferred_source": "DigiKey / Amazon"
+      "component": "Micro-USB OTG Hub (4-Port)",
+      "purpose": "Connects RTL-SDR, Mic, and LoRa modules to Pi Zero",
+      "unit_cost": 9.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 8, "part": "LiPo 2S 5000mAh flat", "sku_class": "7.4V XT30, with protection",
-      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 25,
-      "risk_notes": "7.4V nominal (8.4V full) — MUST go through buck to 5V; direct connection destroys Pi. Prefer a pack with protection circuit. SHIPPING RESTRICTED (air freight rules); source locally where possible. Do not puncture.",
-      "preferred_source": "Local hobby shop (shipping regs)"
+      "component": "IP67 Rugged Enclosure",
+      "purpose": "Weatherproof field casing for node protection",
+      "unit_cost": 25.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 9, "part": "5V 2.5A buck converter", "sku_class": "Pololu D24V22F5 class",
-      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 9,
-      "risk_notes": "Rate >=2.5A continuous. Verify 5.0V at OUT with a meter BEFORE connecting Pi. Cheap modules sag under RTL load and cause brownout reboots. Pololu is reliable.",
-      "preferred_source": "Pololu / DigiKey"
+      "component": "High-Gain 915MHz SMA Antenna",
+      "purpose": "Boosts local LoRa mesh signal across perimeter",
+      "unit_cost": 14.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 10, "part": "IP65 ABS enclosure", "sku_class": "165x135x85mm (or 150x120x90mm)",
-      "first_node_qty": 1, "spare_qty": 0, "unit_usd": 18,
-      "risk_notes": "165x135x85 has 0mm stack margin — if lid won't close, use 150x120x90mm. Needs 2x M16 glands. Hammond 1591XX-class.",
-      "preferred_source": "DigiKey / Mouser (Hammond)"
+      "component": "Tamper Micro-Switches & Wires",
+      "purpose": "Physical GPIO grounding loops for emergency wipe",
+      "unit_cost": 5.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 11, "part": "Pole + U-bolt kit", "sku_class": "50mm x 2.5m + U-bolt",
-      "first_node_qty": 1, "spare_qty": 0, "unit_usd": 30,
-      "risk_notes": "Non-critical mechanical. Galvanized for outdoor. Confirm U-bolt fits 50mm OD.",
-      "preferred_source": "Hardware store"
+      "component": "Cables & Mounting Hardware",
+      "purpose": "Internal USB lines, standoffs, zip-ties, and thermal tape",
+      "unit_cost": 15.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     },
     {
-      "line": 12, "part": "Powered USB OTG hub (4-port)", "sku_class": "micro-B OTG, externally powered",
-      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 12,
-      "risk_notes": "MUST be powered (RTL+mic+radio exceed Pi Zero USB current). Confirm micro-B OTG uplink. Some 'OTG' hubs back-power the Pi incorrectly — test power path.",
-      "preferred_source": "Amazon"
-    },
-    {
-      "line": 13, "part": "Cables/glands/standoffs/desiccant/fuse", "sku_class": "misc kit",
-      "first_node_qty": 1, "spare_qty": 1, "unit_usd": 15,
-      "risk_notes": "Include 3A inline fuse holder for LiPo, M3x12 standoffs, M16 glands, 22AWG silicone wire, Dupont jumpers, desiccant packs.",
-      "preferred_source": "Amazon / DigiKey"
-    },
-    {
-      "line": 14, "part": "High-endurance MicroSD option", "sku_class": "32GB+ endurance-rated",
-      "first_node_qty": 0, "spare_qty": 1, "unit_usd": 10,
-      "risk_notes": "Use when expected ORANGE duty exceeds 10% or when SQLite WAL logging remains enabled for multi-month deployments.",
-      "preferred_source": "DigiKey / reputable retailer"
+      "component": "Solar Panel Trickle Charger",
+      "purpose": "Extends field deployment life indefinitely",
+      "unit_cost": 30.00,
+      "quantity_per_node": 1,
+      "total_quantity": 4
     }
   ],
-  "per_node_subtotal_usd": 216,
-  "first_order_recommendation": {
-    "description": "ONE node + spares. Prove G1-G3 before buying 3 more.",
-    "full_nodes": 1,
-    "include_spares": true,
-    "estimated_usd": 342
-  },
-  "site_4_node": {
-    "full_nodes": 4,
-    "electronics_usd": 864,
-    "enclosures_usd": 72,
-    "poles_usd": 120,
-    "site_total_usd": 1056
-  },
-  "spares_kit_summary": {
-    "items": ["Pi Zero 2 W x1", "RTL-SDR V3 TCXO x1", "USB hub x1", "LiPo 2S x1", "MicroSD pre-flashed x2", "high-endurance microSD x1", "reed x2", "PIR x1", "desiccant x4"],
-    "estimated_usd": 142
-  },
-  "bench_test_equipment": [
-    { "part": "2.4 GHz source (Wi-Fi AP or phone hotspot)", "for_gate": "G2", "risk_notes": "Must actively transmit data during test." },
-    { "part": "220 Hz tone speaker / phone app", "for_gate": "G3", "risk_notes": "Steady tone, moderate volume, ~5 m." },
-    { "part": "Meshtastic phone app (paired)", "for_gate": "G4", "risk_notes": "Required to confirm inbound RX (Mk I RX is manual)." },
-    { "part": "Digital multimeter", "for_gate": "assembly", "risk_notes": "Mandatory for power-on voltage checks." },
-    { "part": "USB inline power meter (optional)", "for_gate": "G5", "risk_notes": "Helps confirm <5W budget." }
-  ],
-  "compliance": {
-    "export_itar": "International shipment/sale requires export screening sign-off — see docs/export_screening.md.",
-    "rf_regulatory": "Meshtastic LoRa region must match local RF law before powering antennas."
+  "financial_summary": {
+    "total_hardware_cost": 864.00,
+    "licensing_fees": 0.00,
+    "status": "APPROVED_PRE_PHYSICAL"
   }
 }

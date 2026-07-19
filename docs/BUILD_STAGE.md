@@ -1,6 +1,6 @@
 # SENTRY Build Stage — Single Source of Truth
 
-**Type:** AN/GSQ-100(V)1 · **SENTRY Node Mk I** · **Version:** v0.4.0-build  
+**Type:** AN/GSQ-100(V)1 · **SENTRY Node Mk I** · **Version:** v0.5.0-darkspace-integrated
 **Mode:** Defensive-only · Receive-only
 
 > This document governs the **entire build process**. If any other document conflicts with this one, **this document wins**. Read [`../HANDOFF_README.md`](../HANDOFF_README.md) first.
@@ -85,10 +85,10 @@ You may skip re-running G2/G3 per node **only if** the BOM and assembly are iden
 **Build stage is COMPLETE (software) when:**
 
 - [x] G0/software gate passes locally and in CI (`validation/build_readiness.py`)
-- [x] Procurement BOM frozen with risk/qty/sourcing
+- [x] Procurement BOM frozen as approved 4-node production BOM
 - [x] 4-node configs + site manifest frozen
 - [x] Assembly, flash, gate, and failure docs written for a non-author
-- [x] Tag `v0.4.0-build` pushed, CI green
+- [ ] Release tag pushed after CI green
 
 **Build stage is COMPLETE (physical) when:**
 

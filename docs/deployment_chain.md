@@ -90,7 +90,7 @@ stowed → deploying → deployed → chain_joining → operational → watch (n
 | `spring_launcher` | 55 | Pi/RTL likely fail |
 | `line_charge_reference` | 450 | **Total destruction (model only)** |
 
-Component survival thresholds (paper): Pi 40g, RTL-SDR 25g, MEMS 30g, LiPo 60g.
+Component survival thresholds (paper): Pi 40g, RTL-SDR 25g, MEMS 30g, USB power bank 60g.
 
 ---
 
@@ -111,7 +111,7 @@ Example config: [`configs/deployment_chain_alpha.json`](../configs/deployment_ch
 ## 6. Refined deployment constraints (HQ)
 
 1. **Spacing:** 5–10 m between nodes; default 7.5 m.
-2. **Mass:** Target ≤ 300 g per node including enclosure + 2S LiPo.
+2. **Mass:** Target ≤ 300 g per node excluding enclosure, including regulated USB power bank.
 3. **Launch:** Pneumatic or spring **non-explosive** only; soldier-operated.
 4. **Chain:** Physical tether for emplacement ordering; mesh is logical overlay (Meshtastic).
 5. **Post-landing:** Mandatory BIT before arming detection — no silent false negatives from dead nodes.

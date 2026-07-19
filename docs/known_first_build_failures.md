@@ -11,26 +11,26 @@
 
 ### 1.1 No boot — no green ACT LED
 - **Symptom:** Pi shows no activity LED after power.
-- **Root cause:** Brownout (buck not at 5.0 V), bad SD flash, or hub back-powering.
+- **Root cause:** Brownout (USB power not holding 5 V), bad SD flash, or hub back-powering.
 - **Fix:**
   ```bash
-  # Off-Pi: re-measure buck OUT with multimeter -> must read 5.0 V +/- 0.1
+  # Off-Pi: measure USB power output with a USB meter -> should hold near 5.0 V
   # Re-flash SD (Imager -> verify). Confirm power into the OUTER micro-USB (PWR).
   ```
 
 ### 1.2 Rainbow screen / repeated reboot
 - **Symptom:** Boot loops or undervoltage warnings in `dmesg`.
-- **Root cause:** Insufficient current (cheap PSU / thin cable / undersized buck).
+- **Root cause:** Insufficient current (weak power bank / thin cable / unpowered hub).
 - **Fix:**
   ```bash
   dmesg | grep -i voltage   # look for "Under-voltage detected"
   # Use 5V 2.5A supply and 20AWG+ power leads; shorten cable run.
   ```
 
-### 1.3 LiPo will not power node / cuts out under load
+### 1.3 Power bank will not power node / cuts out under load
 - **Symptom:** Node dies when RTL sweep starts.
-- **Root cause:** LiPo protection cutoff, undercharged pack, or fuse too small.
-- **Fix:** Charge to 8.0–8.4 V; use ≥3 A inline fuse; verify buck rated ≥2.5 A continuous.
+- **Root cause:** Undercharged pack, weak USB cable, or power bank auto-sleep.
+- **Fix:** Charge the pack, use a short high-current USB cable, and verify the bank stays awake under the Pi + USB hub load.
 
 ---
 
@@ -55,7 +55,7 @@
 ### 2.3 G2 never shows `rf_burst_2g4`
 - **Symptom:** Emitter on, no RF flag.
 - **Root cause:** Non-TCXO clone drift, antenna detached/co-located with LoRa, emitter too far.
-- **Fix:** Use **TCXO** RTL-SDR Blog V3; separate RTL/LoRa antennas ≥150 mm; place emitter ~1 m; raise `burst_threshold_db` only after confirming geometry.
+- **Fix:** Use the specified RTL-SDR Blog V4; separate RTL/LoRa antennas ≥150 mm; place emitter ~1 m; raise `burst_threshold_db` only after confirming geometry.
 
 ### 2.4 Permission denied opening RTL
 - **Symptom:** Works with `sudo`, fails as user.
@@ -115,8 +115,8 @@
 
 ### 4.3 Wrong radio variant
 - **Symptom:** Meshtastic firmware won't run / wrong region behavior.
-- **Root cause:** SX1276 board instead of **SX1262**.
-- **Fix:** Confirm board is **SX1262** T-Beam. Reflash correct Meshtastic firmware for the variant.
+- **Root cause:** Wrong LoRa region, wrong serial bridge, or non-Meshtastic-compatible radio firmware.
+- **Fix:** Confirm the Waveshare 915 MHz LoRa HAT/bridge is set for the legal local region and visible at `/dev/ttyACM0` or `/dev/meshtastic`. Reflash compatible firmware for the exact board variant.
 
 ### 4.4 Peer never receives ORANGE (G4)
 - **Symptom:** TX node alerts, peer silent.
@@ -135,7 +135,7 @@
 ### 5.2 Tamper always "tamper_detected"
 - **Symptom:** Constant HOLD.
 - **Root cause:** Reed not aligned with lid magnet, or wrong pull config.
-- **Fix:** Align magnet so reed is **closed** when lid is shut; confirm GPIO27 (pin 13) to GND, active-low.
+- **Fix:** Align the switch so the case holds it closed; confirm GPIO21 (physical pin 40) to GND (physical pin 39). Closed case should read LOW; opened case should read HIGH.
 
 ### 5.3 GPIO permission denied
 - **Symptom:** `RuntimeError: No access to /dev/gpiomem`.
@@ -151,7 +151,7 @@
 ### 6.1 `pip install -e` fails: "project.version must be pep440"
 - **Symptom:** Editable install aborts.
 - **Root cause:** Non-PEP440 version string in `pyproject.toml`.
-- **Fix:** Version must be e.g. `0.4.0` (not `0.4.0-build`). Already fixed in v0.4.0; pull latest `main`.
+- **Fix:** Version must be PEP 440 compliant, for example `0.5.0` rather than `0.5.0-darkspace-integrated`.
 
 ### 6.2 `sentry-guard: command not found`
 - **Symptom:** Entry point missing.
@@ -187,7 +187,7 @@
 
 ### 8.1 Lid will not close
 - **Symptom:** Stack too tall for 165×135×85 mm box.
-- **Fix:** Use the **150×120×90 mm** box (datasheet §3.1) or a thinner LiPo.
+- **Fix:** Use the **150×120×90 mm** box (datasheet §3.1) or a slimmer USB power bank.
 
 ### 8.2 Condensation inside
 - **Symptom:** Moisture, corrosion.

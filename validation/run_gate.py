@@ -41,19 +41,19 @@ def _remediation(adapter: str) -> list[str]:
             "Install RTL tools: sudo apt-get install -y rtl-sdr librtlsdr-dev",
             "Blacklist DVB driver: echo 'blacklist dvb_usb_rtl28xxu' | sudo tee /etc/modprobe.d/rtl-sdr-blacklist.conf ; reboot",
             "Verify dongle: rtl_test -t   (expect 'Found 1 device').",
-            "Use TCXO RTL-SDR Blog V3 — cheap clones drift and fail sweeps.",
+            "Use the specified RTL-SDR Blog V4 — cheap clones drift and fail sweeps.",
         ],
         "visual": [
             "Optional sensor. If unused, ignore. Else: enable camera and check /dev/video0.",
         ],
         "tamper_gpio": [
-            "Confirm reed switch on GPIO27 (physical pin 13) to GND, pull-up active-low.",
+            "Confirm tamper switch on GPIO21 (physical pin 40) to GND (physical pin 39), pull-up active-high on case open.",
             "Run on Pi only.",
         ],
         "meshtastic_handler": [
-            "Confirm T-Beam on /dev/ttyACM0 or symlink /dev/meshtastic: ls -l /dev/ttyACM* /dev/meshtastic",
+            "Confirm Waveshare LoRa HAT or Meshtastic bridge on /dev/ttyACM0 or symlink /dev/meshtastic: ls -l /dev/ttyACM* /dev/meshtastic",
             "Install udev rules: sudo cp deploy/99-sentry.rules /etc/udev/rules.d/ ; sudo udevadm control --reload-rules ; sudo udevadm trigger",
-            "Confirm SX1262 variant (not SX1276) and Meshtastic firmware flashed.",
+            "Confirm 915 MHz region and compatible Meshtastic bridge firmware.",
             "Add user to dialout group: sudo usermod -aG dialout $USER ; reboot.",
         ],
     }

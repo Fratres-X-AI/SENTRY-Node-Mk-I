@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from typing import Any
 
 
 def cuda_available() -> bool:
@@ -14,7 +15,7 @@ def cuda_available() -> bool:
         return False
 
 
-def get_device(force_gpu: bool = False):
+def get_device(force_gpu: bool = False) -> Any:
     import torch
 
     if force_gpu or os.environ.get("SENTRY_FORCE_GPU", "").lower() in ("1", "true", "yes"):
@@ -24,7 +25,7 @@ def get_device(force_gpu: bool = False):
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def require_cuda() -> "torch.device":
+def require_cuda() -> Any:
     import torch
 
     if not torch.cuda.is_available():

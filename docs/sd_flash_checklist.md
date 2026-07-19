@@ -1,7 +1,7 @@
 # SENTRY SD Card Flash & Provision — Literal Checklist
 
 **Target:** Raspberry Pi Zero 2 W · **OS:** Raspberry Pi OS Lite (64-bit, Bookworm)  
-**Type:** AN/GSQ-100(V)1 · **Build tag:** v0.4.0-build
+**Type:** AN/GSQ-100(V)1 · **Build tag:** v0.5.0-darkspace-integrated
 
 > Tick every box. If a verification command does not produce the expected output, stop and see
 > [`known_first_build_failures.md`](known_first_build_failures.md).
@@ -80,7 +80,7 @@ sudo reboot
 
 ## E. Clone repo and provision
 
-- [ ] Clone (private repo — use a token or deploy key):
+- [ ] Clone the repository:
 
 ```bash
 git clone https://github.com/Fratres-X-AI/SENTRY-Node-Mk-I.git /opt/sentry-node-mk-i

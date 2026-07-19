@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from typing import Any
 
 from sentry.gpu.device import require_cuda
 
@@ -18,7 +19,7 @@ class GpuMonteCarloResult:
     batches: int
 
 
-def _level_from_score(scores, yellow, orange, red):
+def _level_from_score(scores: Any, yellow: float, orange: float, red: float) -> Any:
     import torch
 
     levels = torch.zeros_like(scores, dtype=torch.int64)

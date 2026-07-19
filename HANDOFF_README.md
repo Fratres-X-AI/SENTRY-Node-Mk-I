@@ -1,7 +1,7 @@
 # SENTRY — Handoff Package (AN/GSQ-100(V)1)
 
-**Codename:** SENTRY · **Type:** AN/GSQ-100(V)1 · SENTRY Node Mk I · **Version:** v0.4.0-build  
-**Organization:** Fratres X AI — Defense Projects HQ · **Mode:** Defensive-only · Receive-only
+**Codename:** SENTRY · **Type:** AN/GSQ-100(V)1 · SENTRY Node Mk I · **Version:** v0.5.0-darkspace-integrated
+**Organization:** Fratres X AI · **Mode:** Defensive-only · Receive-only
 
 ---
 
@@ -35,7 +35,7 @@ A small, pole-mounted, weatherproof box built on a **Raspberry Pi Zero 2 W**. It
 
 | Excluded / limited | Reality — state this to stakeholders |
 |--------------------|--------------------------------------|
-| **5.8 GHz RF** | **Synthetic only.** RTL-SDR V3 (RTL2832U) cannot tune 5.8 GHz. Do not claim 5.8 GHz detection. |
+| **5.8 GHz RF** | **Synthetic only.** RTL-SDR Blog V4 is not a native 5.8 GHz receiver. Do not claim 5.8 GHz detection without a separate front-end. |
 | **Meshtastic RX** | **Manual / phone app.** Outbound alerts (TX) work; inbound receive is a spool placeholder, confirmed via the Meshtastic app. |
 | **Chain/rocket deployment** | **Paper concept only.** Mk I requires **hand emplacement**. See [`docs/deployment_chain.md`](docs/deployment_chain.md). |
 | **Field FP/FN rates** | **Unmeasured.** Simulation ≠ field performance. |
@@ -49,8 +49,8 @@ A small, pole-mounted, weatherproof box built on a **Raspberry Pi Zero 2 W**. It
 ```
 STEP 1  ORDER PARTS
         Open configs/procurement_bom.json
-        Order ONE node + spares first (~$332). Do not buy 4x yet.
-        Heed every "risk_notes" field (TCXO RTL-SDR, SX1262 T-Beam).
+        Order ONE node first (~$216). Do not buy 4x until G1-G5 pass on the first unit.
+        Use the exact production BOM: RTL-SDR Blog V4, Waveshare 915 MHz LoRa HAT, industrial microSD, regulated USB power bank.
 
 STEP 2  BUILD NODE 001
         Follow docs/build_assembly.md exactly (GPIO pins, wire colors, power-on sequence).
@@ -91,7 +91,7 @@ After G1 passes on node 001: continue to **G2–G5** in [`docs/gate_execution.md
 | `docs/risk_register.md` | Blunt risk list R1–R14 |
 | `docs/pi_deployment.md` | Pi install + systemd notes |
 | `docs/export_screening.md` | Export/ITAR screening draft |
-| `configs/procurement_bom.json` | Frozen shopping list with risk/qty/sourcing |
+| `configs/procurement_bom.json` | Approved 4-node production shopping list |
 | `configs/nodes/*.json` | Per-node production configs (simulation OFF) |
 | `configs/deployment_site_alpha.json` | Example 4-node site manifest |
 | `configs/sentry_mission_profile.json` | Thresholds, weights, guardian timing |

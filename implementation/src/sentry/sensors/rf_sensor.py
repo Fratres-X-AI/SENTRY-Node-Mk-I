@@ -1,7 +1,8 @@
-"""RTL-SDR passive EW burst detection — 2.4 GHz (RTL2832) + 5.8 GHz synthetic fallback.
+"""RTL-SDR passive EW burst detection — planned 2.4 GHz path + 5.8 GHz synthetic fallback.
 
-GAP (documented): RTL-SDR Blog V3 (RTL2832U) cannot receive 5.8 GHz natively (~1.7 GHz max).
-The 5g8 band uses simulation fallback until a suitable front-end is added.
+GAP (documented): RTL-SDR Blog V4 still uses an RTL2832-class receiver path and cannot
+receive 5.8 GHz natively. The 5g8 band uses simulation fallback until a suitable
+front-end is added.
 """
 
 from __future__ import annotations

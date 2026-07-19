@@ -1,6 +1,6 @@
 # SENTRY Project Overview
 
-**Codename:** SENTRY · **Version:** 0.3.0 · **Mode:** Defensive-only  
+**Codename:** SENTRY · **Version:** 0.5.0-darkspace-integrated · **Mode:** Defensive-only
 **Type designation:** **AN/GSQ-100(V)1** (SENTRY Node Mk I) · **PMSEWN** — Passive Multi-Sensor Early-Warning Node
 
 SENTRY is a **4-node-capable** passive early-warning mesh built on Raspberry Pi Zero 2 W. Each pole-mounted node fuses motion, acoustic (100–500 Hz), RF (2.4 GHz passive sweep), and optional visual motion into explainable alerts relayed over Meshtastic LoRa.

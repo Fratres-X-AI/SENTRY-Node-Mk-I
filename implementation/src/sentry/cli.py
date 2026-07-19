@@ -54,16 +54,16 @@ _GATE_REMEDIATION = {
     "rf_sensor": [
         "sudo apt-get install -y rtl-sdr librtlsdr-dev",
         "echo 'blacklist dvb_usb_rtl28xxu' | sudo tee /etc/modprobe.d/rtl-sdr-blacklist.conf && sudo reboot",
-        "rtl_test -t   (expect 'Found 1 device'). Use TCXO RTL-SDR Blog V3; clones fail.",
+        "rtl_test -t   (expect 'Found 1 device'). Use the specified RTL-SDR Blog V4; clones fail.",
     ],
     "visual": ["Optional. If unused, ignore. Else check /dev/video0 and enable camera."],
     "tamper_gpio": [
-        "Reed switch -> GPIO27 (pin 13) and GND; pull-up active-low. Run on the Pi.",
+        "Tamper switch -> GPIO21 (physical pin 40) and GND (physical pin 39); pull-up active-high on case open. Run on the Pi.",
     ],
     "meshtastic_handler": [
-        "ls -l /dev/ttyACM* /dev/meshtastic   (expect the T-Beam serial device).",
+        "ls -l /dev/ttyACM* /dev/meshtastic   (expect the Waveshare LoRa HAT or Meshtastic serial bridge).",
         "sudo cp deploy/99-sentry.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules && sudo udevadm trigger",
-        "Confirm SX1262 variant + Meshtastic firmware. sudo usermod -aG dialout $USER && sudo reboot",
+        "Confirm 915 MHz region + compatible Meshtastic bridge firmware. sudo usermod -aG dialout $USER && sudo reboot",
     ],
 }
 

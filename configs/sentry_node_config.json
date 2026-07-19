@@ -15,8 +15,15 @@
   },
   "hardware": {
     "profile": "raspberry-pi-zero-2-w",
-    "pir": { "gpio_pin": 17, "pull": "down" },
-    "tamper": { "gpio_pin": 27, "pull": "up", "active_low": true },
+    "pir": {
+      "gpio_pin": 17,
+      "pull": "down"
+    },
+    "tamper": {
+      "gpio_pin": 21,
+      "pull": "up",
+      "active_low": true
+    },
     "acoustic": {
       "sample_rate_hz": 16000,
       "frame_samples": 4096,
@@ -31,14 +38,36 @@
       "timeout_s": 12,
       "jamming_delta_db": 12,
       "bands": [
-        { "name": "2g4", "start_mhz": 2400, "end_mhz": 2500, "bin_hz": 200000, "burst_threshold_db": 10, "rtl_capable": true },
-        { "name": "5g8", "start_mhz": 5800, "end_mhz": 5900, "bin_hz": 200000, "burst_threshold_db": 10, "rtl_capable": false }
+        {
+          "name": "2g4",
+          "start_mhz": 2400,
+          "end_mhz": 2500,
+          "bin_hz": 200000,
+          "burst_threshold_db": 10,
+          "rtl_capable": true
+        },
+        {
+          "name": "5g8",
+          "start_mhz": 5800,
+          "end_mhz": 5900,
+          "bin_hz": 200000,
+          "burst_threshold_db": 10,
+          "rtl_capable": false
+        }
       ]
     },
-    "visual": { "camera_index": 0, "frame_width": 160, "frame_height": 120 },
+    "visual": {
+      "camera_index": 0,
+      "frame_width": 160,
+      "frame_height": 120
+    },
     "meshtastic": {
       "device_path": "/dev/ttyACM0",
-      "peers": ["sentry-pi-zero-002", "sentry-pi-zero-003", "sentry-pi-zero-004"],
+      "peers": [
+        "sentry-pi-zero-002",
+        "sentry-pi-zero-003",
+        "sentry-pi-zero-004"
+      ],
       "fallback_spool": "/var/lib/sentry/meshtastic_spool.jsonl"
     },
     "duty_cycle": {
@@ -75,8 +104,12 @@
   },
   "tamper_response": {
     "dry_run": true,
-    "wipe_env_keys": ["SENTRY_AUDIT_HMAC_KEY"],
-    "wipe_paths": ["/var/lib/sentry/meshtastic_spool.jsonl"]
+    "wipe_env_keys": [
+      "SENTRY_AUDIT_HMAC_KEY"
+    ],
+    "wipe_paths": [
+      "/var/lib/sentry/meshtastic_spool.jsonl"
+    ]
   },
   "outputs": {
     "alert_dir": "validation/reports",

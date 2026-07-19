@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,8 +21,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Validate JSON configs
+        run: |
+          python -m json.tool configs/procurement_bom.json >/dev/null
+          python -m json.tool configs/sentry_node_config.json >/dev/null
+          python -m json.tool configs/deployment_site_alpha.json >/dev/null
       - name: Install package
-        run: pip install -e "./implementation[dev]"
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e "./implementation[dev]"
       - name: Pytest
         working-directory: implementation
         run: pytest tests --cov=sentry --cov-fail-under=100 -q -k "not gpu"

@@ -6,7 +6,7 @@ This checklist runs the heavy DARKSPACE cloud validation sweep on a RunPod pod. 
 python scripts/runpod_validation_sweep.py
 ```
 
-The script must be run from the DARKSPACE repository root after syncing the project to the pod.
+The script is optional and should be run from a disposable validation workspace after syncing the project to the pod.
 
 ## 1. Pod Requirements
 
@@ -20,17 +20,16 @@ The script must be run from the DARKSPACE repository root after syncing the proj
 
 ## 2. Local Sync
 
-From your Windows workstation, use the pod's direct TCP endpoint shown in RunPod. Your current pod screen shows this pattern:
+From your workstation, use the pod's direct TCP endpoint shown in RunPod:
 
 ```powershell
-scp -P 33353 -i "$env:USERPROFILE\.ssh\id_ed25519" -r "C:\Users\Besn Daddy\Desktop\darkspace-gray-swan-blue-reference" root@157.157.221.29:/workspace/darkspace
+scp -P <PORT> -i "$env:USERPROFILE\.ssh\id_ed25519" -r "<LOCAL_REPO_PATH>" root@<POD_IP>:/workspace/sentry
 ```
 
-For this SENTRY workspace artifact only:
+For a script-only refresh:
 
 ```powershell
-scp -P 33353 -i "$env:USERPROFILE\.ssh\id_ed25519" "C:\Users\Besn Daddy\Desktop\Sentry\scripts\runpod_validation_sweep.py" root@157.157.221.29:/workspace/darkspace/scripts/runpod_validation_sweep.py
-scp -P 33353 -i "$env:USERPROFILE\.ssh\id_ed25519" "C:\Users\Besn Daddy\Desktop\Sentry\RUNPOD_DEPLOYMENT_CHECKLIST.md" root@157.157.221.29:/workspace/darkspace/RUNPOD_DEPLOYMENT_CHECKLIST.md
+scp -P <PORT> -i "$env:USERPROFILE\.ssh\id_ed25519" "scripts\runpod_validation_sweep.py" root@<POD_IP>:/workspace/sentry/scripts/runpod_validation_sweep.py
 ```
 
 If your pod IP or port changes, copy the fresh values from RunPod's **SSH over exposed TCP** block.
@@ -38,13 +37,13 @@ If your pod IP or port changes, copy the fresh values from RunPod's **SSH over e
 ## 3. Connect To The Pod
 
 ```powershell
-ssh root@157.157.221.29 -p 33353 -i "$env:USERPROFILE\.ssh\id_ed25519"
+ssh root@<POD_IP> -p <PORT> -i "$env:USERPROFILE\.ssh\id_ed25519"
 ```
 
 Inside the pod:
 
 ```bash
-cd /workspace/darkspace
+cd /workspace/sentry
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -U pip
@@ -173,12 +172,12 @@ status= PASS
 From your Windows workstation:
 
 ```powershell
-mkdir "C:\Users\Besn Daddy\Desktop\Sentry\validation\runpod_artifacts"
+mkdir "<LOCAL_REPO_PATH>\validation\runpod_artifacts"
 
-scp -P 33353 -i "$env:USERPROFILE\.ssh\id_ed25519" root@157.157.221.29:/workspace/darkspace/validation/reports/gpu_hardware_manifest.json "C:\Users\Besn Daddy\Desktop\Sentry\validation\runpod_artifacts\"
-scp -P 33353 -i "$env:USERPROFILE\.ssh\id_ed25519" root@157.157.221.29:/workspace/darkspace/validation/reports/runpod_validation_manifest.json "C:\Users\Besn Daddy\Desktop\Sentry\validation\runpod_artifacts\"
-scp -P 33353 -i "$env:USERPROFILE\.ssh\id_ed25519" root@157.157.221.29:/workspace/darkspace/validation/reports/runpod_validation_sweep.log "C:\Users\Besn Daddy\Desktop\Sentry\validation\runpod_artifacts\"
-scp -P 33353 -i "$env:USERPROFILE\.ssh\id_ed25519" root@157.157.221.29:/workspace/darkspace/audit_log.db "C:\Users\Besn Daddy\Desktop\Sentry\validation\runpod_artifacts\"
+scp -P <PORT> -i "$env:USERPROFILE\.ssh\id_ed25519" root@<POD_IP>:/workspace/sentry/validation/reports/gpu_hardware_manifest.json "<LOCAL_REPO_PATH>\validation\runpod_artifacts\"
+scp -P <PORT> -i "$env:USERPROFILE\.ssh\id_ed25519" root@<POD_IP>:/workspace/sentry/validation/reports/runpod_validation_manifest.json "<LOCAL_REPO_PATH>\validation\runpod_artifacts\"
+scp -P <PORT> -i "$env:USERPROFILE\.ssh\id_ed25519" root@<POD_IP>:/workspace/sentry/validation/reports/runpod_validation_sweep.log "<LOCAL_REPO_PATH>\validation\runpod_artifacts\"
+scp -P <PORT> -i "$env:USERPROFILE\.ssh\id_ed25519" root@<POD_IP>:/workspace/sentry/audit_log.db "<LOCAL_REPO_PATH>\validation\runpod_artifacts\"
 ```
 
 ## 9. Secure Cleanup

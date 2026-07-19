@@ -20,7 +20,7 @@
       "pull": "down"
     },
     "tamper": {
-      "gpio_pin": 27,
+      "gpio_pin": 21,
       "pull": "up",
       "active_low": true
     },

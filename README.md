@@ -1,106 +1,66 @@
-# Project SENTRY
+# SENTRY Node Mk I
 
-**Organization:** Fratres X AI — Defense Projects HQ  
-**Codename:** SENTRY — passive Pi Zero 2 W early-warning mesh node  
-**Type designation:** **AN/GSQ-100(V)1** · **SENTRY Node Mk I**  
-**4-node kit:** **AN/GSQ-100A(V)1** · SENTRY Net (4-pack)  
-**Mode:** Defensive-only · Receive-only
+SENTRY is an open-source, defensive early-warning node for a Raspberry Pi Zero 2 W. In plain terms: it is a small weatherproof sensor box that listens for motion, sound, radio activity, tamper events, and lightweight network anomalies. It turns those signals into a simple alert level, writes tamper-evident local records, and can relay short low-power LoRa alerts so a human can investigate.
 
-> **Start here for the full on-paper system:** [`docs/system_datasheet.md`](docs/system_datasheet.md)  
-> Dimensions, BOM, wiring, 4-node layout, power math, every output, acceptance gates.
+SENTRY does not jam, target, engage, or automate any response. It is a passive monitoring and audit system.
 
-| Document | Contents |
-|----------|----------|
-| [`docs/system_datasheet.md`](docs/system_datasheet.md) | **Master spec** — mechanical, electrical, RF, mesh, outputs |
-| [`docs/bom_dimensions.md`](docs/bom_dimensions.md) | Part sizes, masses, site totals |
-| [`docs/outputs_icd.md`](docs/outputs_icd.md) | All JSON outputs + file paths |
-| [`configs/deployment_site_alpha.json`](configs/deployment_site_alpha.json) | Example 4-node site (240×180 m) |
-| [`docs/BUILD_STAGE.md`](docs/BUILD_STAGE.md) | **Build gate** — software done vs physical bench (G1–G5) |
-| [`docs/build_assembly.md`](docs/build_assembly.md) | Step-by-step node assembly |
-| [`configs/procurement_bom.json`](configs/procurement_bom.json) | Frozen shopping list (~$216/node) |
-| [`docs/deployment_chain.md`](docs/deployment_chain.md) | Rapid chain deployment (mechanical, paper) |
-| [`docs/pi_deployment.md`](docs/pi_deployment.md) | Install & bench commands |
-| [`docs/risk_register.md`](docs/risk_register.md) | Blunt risks |
+## Status
 
-**Repository:** [SENTRY-Node-Mk-I](https://github.com/Fratres-X-AI/SENTRY-Node-Mk-I) · **Version:** 0.3.0 · **Type:** AN/GSQ-100(V)1
+Version: `0.5.0-darkspace-integrated`
 
-| Area | Status |
-|------|--------|
-| Simulated PIR / acoustic / RF / visual fusion | Implemented & Tested (synthetic) |
-| Threat scoring (CLEAR → YELLOW → ORANGE → RED → HOLD) | Implemented & Tested (synthetic) |
-| Guardian dwell-confirm + cooldown state machine | Implemented & Tested (synthetic) |
-| HMAC audit hash chain | Implemented & Tested (synthetic) |
-| JSON Schema + simulation V&V | Implemented & Tested (synthetic) |
-**Maturity:** v0.4.0-build — software build gate PASS; **field gates G1–G5 need hardware**
+Software gates pass on desktop/CI. Physical gates still require real hardware bench testing.
 
-| Area | Status |
-|------|--------|
-| `sensors/rf_sensor.py` — rtl_power 2.4 GHz + 5.8 GHz synthetic | Implemented (2g4 hardware on Pi) |
-| `sensors/acoustic_sensor.py` — SciPy FFT peaks 100–500 Hz | Implemented |
-| `sensors/power_metrics.py` — psutil + watt estimates | Implemented |
-| `networking/meshtastic_handler.py` — OMEN mesh relay | Implemented (TX + spool) |
-| Tamper GPIO → HMAC audit + wipe (dry-run default) | Implemented |
-| systemd + udev + bootstrap | Template ready |
-| Field validation on real sensors | **Not started** |
+## What It Does
 
-SENTRY is constellation stage **#1** (passive sense) and **#4** (guardian watch): a Raspberry Pi edge node that fuses passive sensor channels, scores threat evidence, and emits early-warning alerts with an immutable audit trail. **No engagement, kinetic, or weaponization logic.**
+- Fuses passive sensor evidence into `CLEAR`, `YELLOW`, `ORANGE`, `RED`, or `HOLD`.
+- Logs all events to SQLite and critical events to an HMAC audit chain.
+- Suppresses mesh transmission in HOLD/jamming conditions while preserving local logs.
+- Adds lightweight DARKSPACE modules: psutil network anomaly sampling and log entropy scanning.
+- Includes Pi bootstrap, systemd units, BOM, wiring docs, and validation scripts.
 
-## Architecture
+## Start Here
 
-```mermaid
-flowchart LR
-    Sensors[PIR Acoustic RF Visual] --> Fusion[sensor_fusion]
-    Fusion --> Scoring[threat_scorer]
-    Scoring --> Guardian[sentry_guardian]
-    Guardian --> Alerts[alert_frame.v1]
-    Guardian --> Audit[audit_chain HMAC]
-```
+| Document | Purpose |
+|----------|---------|
+| [`docs/system_datasheet.md`](docs/system_datasheet.md) | Full system spec, power math, RF notes, outputs |
+| [`docs/build_assembly.md`](docs/build_assembly.md) | Physical assembly and GPIO wiring |
+| [`docs/pi_deployment.md`](docs/pi_deployment.md) | Pi install and service setup |
+| [`docs/BUILD_STAGE.md`](docs/BUILD_STAGE.md) | Build gates and go/no-go rules |
+| [`configs/procurement_bom.json`](configs/procurement_bom.json) | Production 4-node BOM |
+| [`SECURITY.md`](SECURITY.md) | Vulnerability reporting |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Contribution rules |
 
 ## Quickstart
 
 ```powershell
 cd implementation
 pip install -e ".[dev]"
-pytest tests/ -q
-sentry-guard --probe
-sentry-sim --scenario intrusion
-sentry-guard --live --duration 10
-sentry-guard --failure-modes
-python ..\run_complete_audit.py
+pytest tests --cov=sentry --cov-fail-under=100 -q -k "not gpu"
+mypy src/sentry
+cd ..
+python validation/build_readiness.py
+python run_complete_audit.py
 ```
 
-Pi Zero 2 W field install: see [`docs/pi_deployment.md`](docs/pi_deployment.md).
+## Architecture
 
-## Project layout
+```mermaid
+flowchart LR
+    Sensors[PIR Acoustic RF Tamper Passive Monitors] --> Fusion[Sensor Fusion]
+    Fusion --> Scoring[Threat Scoring]
+    Scoring --> Guardian[Guardian State Machine]
+    Guardian --> SQLite[SQLite Event Store]
+    Guardian --> Audit[HMAC Audit Chain]
+    Guardian --> Mesh[LoRa Alert Relay]
+```
 
-| Path | Purpose |
-|------|---------|
-| [`implementation/src/sentry/sensors/`](implementation/src/sentry/sensors/) | RF (rtl_power), acoustic FFT, power metrics |
-| [`implementation/src/sentry/networking/`](implementation/src/sentry/networking/) | Meshtastic OMEN mesh handler |
-| [`implementation/src/sentry/simulation/`](implementation/src/sentry/simulation/) | Synthetic scenarios + desktop fallback |
-| [`schemas/`](schemas/) | `sensor_event.v1`, `alert_frame.v1`, `audit_entry.v1` |
-| [`configs/`](configs/) | Mission profile and Pi node configuration |
-| [`deploy/`](deploy/) | systemd unit, udev rules, bootstrap script |
-| [`docs/risk_register.md`](docs/risk_register.md) | Blunt risk register |
-| [`validation/reports/`](validation/reports/) | Generated simulation and audit artifacts |
-| [`docs/`](docs/) | Overview and Pi deployment notes |
+## Important Limits
 
-## Simulation scenarios
-
-| Scenario | Expected peak level |
-|----------|---------------------|
-| `benign` | CLEAR / YELLOW |
-| `intrusion` | ORANGE / RED |
-| `jamming` | HOLD (hold-safe) |
-| `low_visibility` | YELLOW / ORANGE (degraded visual) |
-
-## Safety
-
-- Human-on-loop assumed for all alert response
-- HOLD level triggers on RF jamming suspicion — no automated counter-action
-- Immutable HMAC audit chain for post-incident review
-- Defensive-only scope: early warning and perimeter guardian watch
+- RTL-SDR Blog V4 is not a native 5.8 GHz receiver. The 5.8 GHz path is synthetic until a suitable front-end is added.
+- Field false-positive and false-negative rates are not proven until G1-G5 hardware testing is complete.
+- Mesh receive is currently a conservative spool/manual integration path.
+- `tamper_response.dry_run` defaults to `true`; destructive wipe behavior must be explicitly enabled.
 
 ## License
 
-MIT — Fratres X AI Defense Projects HQ
+MIT. See [`LICENSE`](LICENSE).

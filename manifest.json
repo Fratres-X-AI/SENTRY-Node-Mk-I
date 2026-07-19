@@ -1,8 +1,8 @@
 {
   "codename": "SENTRY",
   "project": "SENTRY-Node-Mk-I",
-  "organization": "Fratres X AI — Defense Projects HQ",
-  "version": "0.4.0",
+  "organization": "Fratres X AI",
+  "version": "0.5.0",
   "build_stage": "software-gate-pass",
   "mode": "defensive-only",
   "platform": "raspberry-pi",
@@ -18,7 +18,7 @@
     "briefing_line": "AN/GSQ-100(V)1 SENTRY — passive ground early-warning node; PIR + acoustic + RF receive fusion; LoRa mesh alert relay; no emit, no engage"
   },
   "variants": {
-    "V1": { "hardware": "Pi Zero 2 W, RTL-SDR, MEMS, PIR, Meshtastic", "name": "SENTRY Mk I" },
+    "V1": { "hardware": "Pi Zero 2 W, RTL-SDR Blog V4, USB mini microphone, PIR, Waveshare 915 MHz LoRa HAT", "name": "SENTRY Mk I" },
     "V2": { "hardware": "Same + hardened enclosure / solar", "name": "SENTRY Mk II" },
     "V3": { "hardware": "Reduced RF (acoustic + PIR only)", "name": "SENTRY-Lite" }
   },

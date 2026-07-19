@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""RunPod GPU validation sweep for DARKSPACE.
+"""RunPod GPU validation sweep.
 
-This script is intended to run from the DARKSPACE repository root on a RunPod
-GPU instance. It bootstraps CUDA dependencies, runs the adversarial harness,
-executes the extended Neural Mirror red-team corpus, validates SQLite state,
-signs the final report, and sanitizes transient caches.
+This optional script is intended to run from a disposable GPU validation
+workspace. It bootstraps CUDA dependencies, runs the adversarial harness,
+executes the extended red-team corpus, validates SQLite state, signs the final
+report, and sanitizes transient caches.
 """
 
 from __future__ import annotations
@@ -287,7 +287,7 @@ def configure_rtx4090_profile() -> dict[str, Any]:
 def bootstrap_environment(skip_setup: bool) -> None:
     setup = Path("setup_pod_gpu.sh")
     if not setup.exists():
-        raise SweepError("setup_pod_gpu.sh not found; run from DARKSPACE repository root")
+        raise SweepError("setup_pod_gpu.sh not found; run from the GPU validation workspace root")
     if skip_setup:
         logging.info("skipping setup_pod_gpu.sh by request")
         return

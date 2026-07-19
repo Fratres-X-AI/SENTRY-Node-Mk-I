@@ -1,6 +1,6 @@
 # SENTRY — Raspberry Pi Zero 2 W Deployment
 
-**Codename:** SENTRY · **Version:** 0.3.0 · **Mode:** Defensive-only  
+**Codename:** SENTRY · **Version:** 0.5.0-darkspace-integrated · **Mode:** Defensive-only
 **Type designation:** **AN/GSQ-100(V)1** · SENTRY Node Mk I · PMSEWN (receive-only)
 
 Full BOM, bootstrap, systemd, and test commands for field bench. See also [`risk_register.md`](risk_register.md) and [`export_screening.md`](export_screening.md).
@@ -12,16 +12,15 @@ Full BOM, bootstrap, systemd, and test commands for field bench. See also [`risk
 | Qty | Item | Interface | Notes |
 |-----|------|-----------|-------|
 | 1 | Raspberry Pi Zero 2 W | — | 512 MB RAM — duty cycle mandatory |
-| 1 | MicroSD 32 GB A2 | — | |
-| 1 | 5 V 2.5 A PSU | USB micro-B | |
-| 1 | RTL-SDR Blog V3 | USB | **2.4 GHz only** (RTL2832 ~1.76 GHz max) |
-| 1 | USB MEMS mic | ALSA | 100–500 Hz propeller band |
+| 1 | SanDisk Industrial 32 GB MicroSD | — | High-endurance event storage |
+| 1 | Anker PowerCore 10,000 mAh | USB micro-B / adapter | Regulated 5 V power |
+| 1 | RTL-SDR Blog V4 Dongle | USB | Bench-prove RF path; not native 5.8 GHz |
+| 1 | USB Mini Microphone | ALSA | 100–500 Hz propeller band |
 | 1 | HC-SR501 PIR | GPIO 17 | |
-| 1 | Meshtastic (SX1262 LoRa) | `/dev/ttyACM0` | 2–4 node mesh |
-| 1 | NC tamper reed | GPIO 27 | Active-low |
-| 1 | Basic LiPo + boost (optional) | — | Size for <5 W avg budget |
+| 1 | Waveshare LoRa HAT (915MHz) | `/dev/ttyACM0` or configured serial bridge | 2–4 node mesh |
+| 1 | Tamper micro-switch loop | GPIO 21 / physical pin 40 | Pin 39 GND; HIGH on case open |
 
-**5.8 GHz gap:** RTL-SDR V3 **cannot** tune 5800–5900 MHz. Code alternates 2g4 (hardware) and 5g8 (**synthetic fallback**). Do not claim 5.8 GHz detection without new RF front-end.
+**5.8 GHz gap:** RTL-SDR Blog V4 **cannot natively tune 5800–5900 MHz**. Code alternates 2g4 planning/bench path and 5g8 **synthetic fallback**. Do not claim 5.8 GHz detection without a separate RF front-end.
 
 ---
 
@@ -144,7 +143,7 @@ GPIO tamper → `HOLD` alert → HMAC audit `tamper_wipe` event. Default **`dry_
 ## 11. Known limitations (blunt)
 
 - Simulation ≠ field EW; bench 1–2 nodes before any operational claim
-- 5.8 GHz is synthetic on RTL-SDR V3
+- 5.8 GHz is synthetic on RTL-SDR Blog V4 without a separate front-end
 - Acoustic wind/traffic false positives likely — untuned in field
 - Meshtastic throughput/jamming not characterized
 - Friis helper is planning-only — not wired to live detection range

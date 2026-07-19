@@ -68,13 +68,13 @@
     "duty_active_s": 4,
     "duty_sleep_s": 6,
     "battery_wh": 37,
-    "battery_model": "2S LiPo 5000mAh @ 7.4V nominal (example)",
+    "battery_model": "Anker PowerCore 10000mAh USB power bank (~37Wh internal nominal)",
     "estimated_runtime_h": 9.7,
     "solar_option_w": 10
   },
   "rf_planning": {
-    "band_2g4_mhz": { "start": 2400, "end": 2500, "hardware": "RTL-SDR V3", "notes": "Passive burst/jamming sense" },
-    "band_5g8_mhz": { "start": 5800, "end": 5900, "hardware": "NOT RTL2832 — synthetic in v0.3.0", "notes": "Requires future 5.8 GHz front-end" },
+    "band_2g4_mhz": { "start": 2400, "end": 2500, "hardware": "RTL-SDR Blog V4 with bench-proven conversion path", "notes": "Passive burst/jamming sense; verify before field claim" },
+    "band_5g8_mhz": { "start": 5800, "end": 5900, "hardware": "NOT native RTL2832 — synthetic in v0.5.0", "notes": "Requires future 5.8 GHz front-end" },
     "friis_example_2g4": {
       "tx_power_dbm": 20,
       "distance_m": 300,

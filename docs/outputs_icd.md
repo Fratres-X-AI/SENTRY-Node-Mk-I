@@ -1,7 +1,7 @@
 # SENTRY Outputs ICD
 
-**Codename:** SENTRY · **Version:** 0.3.0  
-**Type designation:** AN/GSQ-100(V)1 · SENTRY Node Mk I  
+**Codename:** SENTRY · **Version:** 0.5.0-darkspace-integrated
+**Type designation:** AN/GSQ-100(V)1 · SENTRY Node Mk I
 **Interface control** for all machine-readable outputs
 
 ---
@@ -22,7 +22,7 @@
 
 ## OUT-01: sensor_event.v1
 
-**Rate:** 0.5 Hz live (configurable)  
+**Rate:** 0.5 Hz live (configurable)
 **Example:** [`examples/sensor_event.v1.example.json`](examples/sensor_event.v1.example.json)
 
 | Field | Type | Description |
@@ -64,7 +64,7 @@ Hash chain: each entry links to previous via HMAC-SHA256.
 
 ## OUT-04: omen_alert.v1 (mesh)
 
-**Max size:** 200 bytes (LoRa constraint)  
+**Max size:** 200 bytes (LoRa constraint)
 **Example:** [`examples/omen_alert.v1.example.json`](examples/omen_alert.v1.example.json)
 
 Emitted on ORANGE, RED, HOLD only.
@@ -87,7 +87,7 @@ Emitted on ORANGE, RED, HOLD only.
 
 ## OUT-06: deployment_manifest.v1
 
-Site-level plan: node positions, mesh IDs, power budget.  
+Site-level plan: node positions, mesh IDs, power budget.
 **Example site:** [`configs/deployment_site_alpha.json`](../configs/deployment_site_alpha.json)
 
 ---

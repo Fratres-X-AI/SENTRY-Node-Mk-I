@@ -48,15 +48,21 @@ def main() -> int:
     # Schema sanity on procurement + site manifest
     proc = json.loads((ROOT / "configs/procurement_bom.json").read_text(encoding="utf-8"))
     site = json.loads((ROOT / "configs/deployment_site_alpha.json").read_text(encoding="utf-8"))
-    if proc.get("per_node_subtotal_usd", 0) < 100:
+    if proc.get("target_cost_per_node", 0) < 100:
         print("BUILD READINESS: FAIL — procurement BOM looks incomplete")
         return 1
-    # v2 BOM: every per_node line must carry risk_notes + qty columns for handoff
-    for item in proc.get("per_node", []):
-        for required_field in ("risk_notes", "first_node_qty", "spare_qty", "preferred_source"):
+    if proc.get("site_total_nodes") != 4 or proc.get("financial_summary", {}).get("status") != "APPROVED_PRE_PHYSICAL":
+        print("BUILD READINESS: FAIL — procurement BOM is not approved for the 4-node pre-physical build")
+        return 1
+    # Production BOM: every line must carry cost and node/site quantity fields.
+    for item in proc.get("bom", []):
+        for required_field in ("component", "purpose", "unit_cost", "quantity_per_node", "total_quantity"):
             if required_field not in item:
-                print(f"BUILD READINESS: FAIL — BOM line {item.get('line')} missing '{required_field}'")
+                print(f"BUILD READINESS: FAIL — BOM component {item.get('component')} missing '{required_field}'")
                 return 1
+    if len(proc.get("bom", [])) < 12:
+        print("BUILD READINESS: FAIL — procurement BOM is missing production components")
+        return 1
     if len(site.get("nodes", [])) != 4:
         print("BUILD READINESS: FAIL — site manifest needs 4 nodes")
         return 1
@@ -101,7 +107,7 @@ def main() -> int:
         "codename": "SENTRY",
         "type_designation": "AN/GSQ-100(V)1",
         "gate": "build_readiness_software",
-        "version": "0.4.0-build",
+        "version": "0.5.0-darkspace-integrated",
         "overall": "PASS",
         "checks": {
             "required_files": len(REQUIRED_PATHS) + len(REQUIRED_NODE_CONFIGS),

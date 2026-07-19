@@ -6,6 +6,7 @@ import subprocess
 import threading
 import time
 from dataclasses import dataclass, field
+from typing import Any
 
 from sentry.gpu.acoustic_batch import gpu_batch_fft_propeller
 from sentry.gpu.device import require_cuda
@@ -43,7 +44,7 @@ class GpuMeltEngine:
 
     duration_s: float = 90.0
     matmul_dim: int = 12288
-    samples: list[dict] = field(default_factory=list)
+    samples: list[dict[str, Any]] = field(default_factory=list)
 
     def _matmul_burn_until(self, until: float) -> None:
         import torch
@@ -62,7 +63,7 @@ class GpuMeltEngine:
             self.samples.append({"ts": time.perf_counter(), **util})
             stop.wait(interval_s)
 
-    def run(self) -> dict:
+    def run(self) -> dict[str, Any]:
         import os
 
         import torch
@@ -74,7 +75,7 @@ class GpuMeltEngine:
 
         t_end = time.perf_counter() + self.duration_s
         iteration = 0
-        phase_results: list[dict] = []
+        phase_results: list[dict[str, Any]] = []
 
         print(f"SENTRY GPU MELT: {name} target>={target_util}% for {self.duration_s}s")
         print("BLUNT: GPU melt is RunPod dev only — Pi Zero 2 W field node is CPU-only <5W.")

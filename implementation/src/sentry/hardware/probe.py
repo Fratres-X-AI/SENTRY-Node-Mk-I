@@ -36,7 +36,7 @@ def probe_all(node_config: dict[str, Any] | None = None) -> dict[str, Any]:
     acoustic.close()
 
     gaps = [
-        "RTL-SDR V3 cannot tune 5.8 GHz — 5g8 band uses synthetic fallback",
+        "RTL-SDR Blog V4 cannot natively tune 5.8 GHz — 5g8 band uses synthetic fallback",
         "Field FP/FN rates unvalidated",
         "Meshtastic RX hook is spool-based placeholder",
     ]

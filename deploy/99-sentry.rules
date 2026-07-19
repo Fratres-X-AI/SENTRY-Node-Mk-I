@@ -1,4 +1,4 @@
-# RTL-SDR Blog V3 / generic RTL2832U — read-only IQ for rtl_power
+# RTL-SDR Blog V4 / generic RTL2832U — read-only IQ for rtl_power
 SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="2838", GROUP="sentry", MODE="0640", TAG+="uaccess"
 
 # Meshtastic / ESP32 USB serial

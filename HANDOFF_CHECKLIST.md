@@ -1,6 +1,6 @@
 # SENTRY Handoff Completeness Checklist (Author Sign-Off)
 
-**Type:** AN/GSQ-100(V)1 · **Version:** v0.4.0-build  
+**Type:** AN/GSQ-100(V)1 · **Version:** v0.5.0-darkspace-integrated
 **Purpose:** The author completes this checklist **before** declaring the handoff package complete.
 Every item is verified from the perspective of a builder who has **never seen the code or spoken to the author**.
 
@@ -26,7 +26,7 @@ Every item is verified from the perspective of a builder who has **never seen th
 
 - [ ] `docs/build_assembly.md` lists **exact GPIO physical pins** (PIR 2/6/11, tamper 13/14).
 - [ ] Wire colors, connector types, and standoff sizes specified.
-- [ ] Power-on sequence has **expected voltages/current at each stage** (5.0 V at buck OUT before Pi).
+- [ ] Power-on sequence has **expected voltages/current at each stage** (regulated 5 V USB before Pi).
 - [ ] Common first-assembly mistakes table present.
 - [ ] Enclosure fitment + cable management + antenna separation covered.
 - [ ] Photo placeholders marked for the first builder to capture.
@@ -53,8 +53,8 @@ Every item is verified from the perspective of a builder who has **never seen th
 
 ## 7. Procurement
 
-- [ ] `configs/procurement_bom.json` has `risk_notes`, `first_node_qty`, `spare_qty`, `preferred_source` on every line.
-- [ ] Critical risks called out: TCXO RTL-SDR, SX1262 T-Beam, counterfeit SD, LiPo→buck→5V.
+- [ ] `configs/procurement_bom.json` has the approved 4-node production BOM with `component`, `purpose`, `unit_cost`, `quantity_per_node`, and `total_quantity` on every line.
+- [ ] Critical risks called out: RTL-SDR Blog V4 RF limits, Waveshare LoRa HAT setup, counterfeit SD, regulated USB power only.
 - [ ] Sourcing reliability (DigiKey/Amazon/AliExpress/vendor-direct) documented.
 - [ ] "Order one node first" guidance present.
 
@@ -74,7 +74,7 @@ Every item is verified from the perspective of a builder who has **never seen th
 - [ ] `python validation/build_readiness.py` prints `overall: PASS`.
 - [ ] `python run_complete_audit.py` returns PASS.
 - [ ] GitHub Actions CI green on `main`.
-- [ ] Tag pushed (e.g. `v0.4.0-build` or successor).
+- [ ] Tag pushed (e.g. `v0.5.0-darkspace-integrated` or successor).
 
 ---
 
@@ -82,7 +82,7 @@ Every item is verified from the perspective of a builder who has **never seen th
 
 | Field | Value |
 |-------|-------|
-| Package version | v0.4.0-build |
+| Package version | v0.5.0-darkspace-integrated |
 | Reviewed by | __________________ |
 | Date | __________________ |
 | All boxes ticked? | ☐ Yes — handoff approved · ☐ No — not ready |

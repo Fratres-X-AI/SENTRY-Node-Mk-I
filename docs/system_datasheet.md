@@ -1,7 +1,7 @@
 # SENTRY System Datasheet
 
-**Codename:** SENTRY · **Version:** 0.3.0 · **Date:** 7 June 2026  
-**Organization:** Fratres X AI — Defense Projects HQ  
+**Codename:** SENTRY · **Version:** 0.5.0-darkspace-integrated · **Date:** 10 June 2026
+**Organization:** Fratres X AI
 **Mode:** Defensive-only · Passive early warning · **Working specification on paper**
 
 | Field | Value |
@@ -25,7 +25,7 @@ This document is the single reference for physical dimensions, parts, wiring, po
 
 | Variant | Hardware baseline | Name |
 |---------|-------------------|------|
-| **(V)1** | Pi Zero 2 W, RTL-SDR V3, USB MEMS, HC-SR501 PIR, Meshtastic SX1262 | **SENTRY Mk I** (current) |
+| **(V)1** | Pi Zero 2 W, RTL-SDR Blog V4, USB mini microphone, HC-SR501 PIR, Waveshare 915 MHz LoRa HAT / Meshtastic bridge | **SENTRY Mk I** (current) |
 | **(V)2** | (V)1 + hardened enclosure / solar feed | **SENTRY Mk II** |
 | **(V)3** | Acoustic + PIR only (no RTL-SDR) | **SENTRY-Lite** |
 
@@ -54,10 +54,10 @@ flowchart TB
     subgraph enclosure [Field Enclosure 165x135x85mm]
         Pi[Pi Zero 2 W]
         PIR[HC-SR501 PIR GPIO17]
-        Tamper[Reed switch GPIO27]
+        Tamper[Tamper switch GPIO21]
         Mic[USB MEMS mic]
-        RTL[RTL-SDR V3 USB]
-        LoRa[Meshtastic SX1262 USB/UART]
+        RTL[RTL-SDR Blog V4 USB]
+        LoRa[Waveshare 915 MHz LoRa HAT]
     end
 
     PIR --> Pi
@@ -95,13 +95,13 @@ flowchart TB
 
 | Layer | Component | Footprint (L×W mm) | Height mm |
 |-------|-----------|------------------|-----------|
-| 1 | RTL-SDR V3 +  telescopic antenna (horizontal) | 95 × 25 | 15 |
+| 1 | RTL-SDR Blog V4 + antenna | 95 × 25 | 15 |
 | 2 | Pi Zero 2 W on standoffs | 65 × 30 | 5 (board) + 12 standoff |
-| 3 | Meshtastic board (T-Beam v1.1 class) | 100 × 25 | 20 |
-| 4 | 2S LiPo 5000 mAh flat pack | 130 × 70 | 18 |
-| 5 | DC-DC 5 V 2.5 A buck | 45 × 30 | 10 |
+| 3 | Waveshare LoRa HAT / Meshtastic serial bridge | 65 × 30 | 20 |
+| 4 | Anker PowerCore 10,000 mAh USB pack | 100 × 60 | 22 |
+| 5 | Powered USB OTG hub | 80 × 45 | 15 |
 
-**Total stacked height:** ~70 mm — fits internal clear height with 0 mm margin (use thin LiPo or taller box if needed; **150×120×90 mm** box recommended for production).
+**Total stacked height:** ~70 mm — fits internal clear height with tight margin (use a slimmer USB power bank or taller box if needed; **150×120×90 mm** box recommended for production).
 
 ### 3.3 External sensors (outside box)
 
@@ -120,19 +120,19 @@ flowchart TB
 |---|------|---------------------|-----|-----------|-----------|-----------|
 | 1 | Raspberry Pi Zero 2 W | SC0510 | 1 | 12 g | — | $15 |
 | 2 | MicroSD 32 GB A2 | SanDisk Ultra | 1 | 0.5 g | SDIO | $8 |
-| 3 | RTL-SDR Blog V3 | RTL2832U R820T2 | 1 | 25 g | USB | $40 |
-| 4 | USB MEMS microphone | ReSpeaker / generic UAC 1.0 | 1 | 15 g | USB | $6 |
+| 3 | RTL-SDR Blog V4 Dongle | RTL2832U + R828D class | 1 | 25 g | USB | $35 |
+| 4 | USB Mini Microphone | Generic USB audio | 1 | 15 g | USB | $8 |
 | 5 | HC-SR501 PIR | Standard module | 1 | 20 g | GPIO 3.3 V | $2 |
-| 6 | Meshtastic board | LilyGO T-Beam v1.1 (SX1262) | 1 | 80 g | USB serial `/dev/ttyACM0` | $35 |
-| 7 | NC magnetic reed | 27 mm glass reed | 1 | 5 g | GPIO | $1 |
-| 8 | LiPo 2S 5000 mAh | 7.4 V flat pack | 1 | 280 g | XT30 in | $25 |
-| 9 | 5 V 2.5 A buck | Pololu D24V22F5 class | 1 | 10 g | Power | $9 |
-| 10 | IP65 enclosure | 165×135×85 mm ABS | 1 | 450 g | — | $18 |
-| 11 | Pole + U-bolt kit | 50 mm × 2.5 m | 1 | 3 kg | — | $30 |
-| 12 | USB OTG micro hub | Powered 4-port | 1 | 30 g | USB | $12 |
-| 13 | Cables, glands, standoffs | — | 1 set | 50 g | — | $15 |
+| 6 | Waveshare LoRa HAT (915MHz) | Meshtastic OMEN relay module | 1 | 30 g | USB/serial | $22 |
+| 7 | Tamper micro-switches & wires | Case switch loop | 1 set | 5 g | GPIO | $5 |
+| 8 | Anker PowerCore 10000mAh Battery | Regulated USB power bank | 1 | 180 g | USB power | $26 |
+| 9 | Micro-USB OTG Hub (4-Port) | Powered USB hub | 1 | 30 g | USB | $9 |
+| 10 | IP67 Rugged Enclosure | Weatherproof case | 1 | 450 g | — | $25 |
+| 11 | High-Gain 915MHz SMA Antenna | LoRa mesh antenna | 1 | 25 g | SMA | $14 |
+| 12 | Cables & Mounting Hardware | USB lines, standoffs, zip-ties, thermal tape | 1 set | 50 g | — | $15 |
+| 13 | Solar Panel Trickle Charger | Optional field endurance assist | 1 | 250 g | USB/5 V | $30 |
 
-**Per-node electronics BOM:** ~\$216 (excl. pole, excl. labour)  
+**Per-node electronics BOM:** ~\$216 (excl. pole, excl. labour)
 **4-node site electronics:** ~\$864
 
 ---
@@ -143,16 +143,16 @@ flowchart TB
 
 | Rail | Source | Consumers | Peak A |
 |------|--------|-----------|--------|
-| 7.4 V nominal | 2S LiPo | Buck input | 1.2 A |
-| 5.0 V | Buck output | Pi, USB hub, RTL, mic, LoRa | **0.85 A peak** |
-| 3.3 V | Pi GPIO | PIR, reed (via Pi only) | 0.05 A |
+| 3.7 V nominal internal | USB power bank cells | Regulated pack input | 1.2 A |
+| 5.0 V | USB power bank output | Pi, USB hub, RTL, mic, LoRa | **0.85 A peak** |
+| 3.3 V | Pi GPIO | PIR, tamper switch (via Pi only) | 0.05 A |
 
 ### 5.2 GPIO (BCM numbering)
 
 | Signal | GPIO | Direction | Pull | Notes |
 |--------|------|-----------|------|-------|
 | PIR OUT | **17** | IN | Down | HIGH = motion |
-| Tamper reed | **27** | IN | Up | LOW = enclosure opened |
+| Tamper switch | **21** | IN | Up | Pin 40 to Pin 39 GND; HIGH = enclosure opened |
 | — | 22 | — | — | Reserved (status LED future) |
 
 ### 5.3 USB topology
@@ -160,9 +160,9 @@ flowchart TB
 ```
 Pi Zero 2 W (micro-USB OTG)
   └── Powered USB hub
-        ├── RTL-SDR V3
-        ├── MEMS mic
-        └── Meshtastic (CDC ACM)
+        ├── RTL-SDR Blog V4
+        ├── USB mini microphone
+        └── Waveshare LoRa HAT / Meshtastic bridge
 ```
 
 ---
@@ -214,7 +214,7 @@ This is the no-duty-cycle failure case: CPU saturated, RTL-SDR running continuou
 | DARKSPACE psutil + SQLite tasks | +0.15 W |
 | **Worst-case total** | **4.45 W** |
 
-Battery capacity: `2S 5000 mAh × 7.4 V = 37 Wh`.
+Battery capacity: `10,000 mAh × 3.7 V internal nominal ≈ 37 Wh` before USB conversion losses.
 
 ```
 37 Wh / 4.45 W = 8.3 h worst-case runtime
@@ -251,21 +251,21 @@ With 15-25 dB loss for trees, wet foliage, or light wall penetration, received p
 
 ## 7. RF & acoustic detection (paper performance)
 
-### 7.1 RF — 2.4 GHz (RTL-SDR V3, real hardware)
+### 7.1 RF — 2.4 GHz (RTL-SDR Blog V4, bench-proven hardware path required)
 
 | Parameter | Value |
 |-----------|-------|
 | Sweep | 2400–2500 MHz, 200 kHz bins, 2 s integration |
 | Burst threshold | +10 dB above rolling baseline |
 | Jamming heuristic | Wideband uplift >12 dB, low bin spread |
-| Max RTL2832 tune | ~1766 MHz upper — **2.4 GHz requires upconverter or SDR rated ≥2.5 GHz** |
+| Max RTL2832/R828D tune | ~1766 MHz upper — **2.4 GHz requires upconverter, harmonic method, or SDR rated ≥2.5 GHz** |
 
-**Critical honesty:** Standard RTL-SDR Blog V3 is often used at 2.4 GHz with modified drivers / harmonic mixing in hobby setups; for a **defense paper spec**, treat 2.4 GHz as **planned** and verify with your specific dongle calibration. Code sweeps 2400–2500 MHz per config; bench prove before field claim.
+**Critical honesty:** RTL-SDR Blog V4 still uses an RTL2832-class receiver path and is not a native 2.4 GHz/5.8 GHz instrument. Treat 2.4 GHz as a planned/bench-proven path and verify your specific dongle, antenna, and any conversion method before field claims. Code sweeps 2400–2500 MHz per config; bench prove before operational use.
 
 ### 7.2 RF — 5.8 GHz
 
 | Status | **Not available on RTL2832** |
-| v0.3.0 behaviour | Synthetic fallback only |
+| v0.5.0 behaviour | Synthetic fallback only |
 | Future | Separate 5.8 GHz receiver module |
 
 ### 7.3 Friis link budget example (2.45 GHz planning)
@@ -317,14 +317,14 @@ Reference deployment: [`configs/deployment_site_alpha.json`](../configs/deployme
 | sentry-pi-zero-003 | Gate | Post C | 51.50680, −0.12780 | 120 m |
 | sentry-pi-zero-004 | Relay | Mast | 51.50750, −0.12780 | 120 m |
 
-**Inter-node spacing:** 240 m (long side), 180 m (short side)  
+**Inter-node spacing:** 240 m (long side), 180 m (short side)
 **Overlap:** ~40 m between adjacent 120 m circles — dual-trigger possible near boundaries
 
 ### Meshtastic mesh
 
 | Parameter | Value |
 |-----------|-------|
-| Radio | SX1262 LoRa |
+| Radio | Waveshare 915 MHz LoRa HAT / Meshtastic-compatible bridge |
 | Region example | EU868 / US915 (set per jurisdiction) |
 | Channel | 1 (shared across site) |
 | Payload | `omen_alert.v1` JSON, ≤200 bytes |
