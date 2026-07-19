@@ -16,6 +16,7 @@ validation/reports/*.jsonl
 validation/reports/*.db
 validation/reports/*.sqlite
 validation/reports/*.sqlite3
+validation/reports/ci/
 validation/runpod_artifacts/
 config/baseline.npy
 !validation/reports/.gitkeep

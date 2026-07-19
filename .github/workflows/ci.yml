@@ -30,15 +30,48 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e "./implementation[dev]"
+      - name: Prepare report directory
+        run: mkdir -p validation/reports/ci
       - name: Pytest
         working-directory: implementation
-        run: pytest tests --cov=sentry --cov-fail-under=100 -q -k "not gpu"
+        run: >
+          pytest tests
+          --cov=sentry
+          --cov-fail-under=100
+          --cov-report=term-missing
+          --cov-report=xml:../validation/reports/ci/coverage.xml
+          --cov-report=html:../validation/reports/ci/coverage_html
+          --junitxml=../validation/reports/ci/pytest-junit.xml
+          -q -k "not gpu"
       - name: Mypy
         working-directory: implementation
-        run: mypy src/sentry
+        run: |
+          set -o pipefail
+          mypy src/sentry 2>&1 | tee ../validation/reports/ci/mypy.txt
       - name: Simulation smoke
-        run: python validation/vv/run_sentry_simulation.py
+        run: |
+          set -o pipefail
+          python validation/vv/run_sentry_simulation.py 2>&1 | tee validation/reports/ci/simulation.txt
       - name: Build readiness (software gate)
-        run: python validation/build_readiness.py
+        run: |
+          set -o pipefail
+          python validation/build_readiness.py 2>&1 | tee validation/reports/ci/build_readiness.txt
       - name: Defense readiness audit
-        run: python run_complete_audit.py
+        run: |
+          set -o pipefail
+          python run_complete_audit.py 2>&1 | tee validation/reports/ci/audit.txt
+          if [ -f validation/reports/defense-readiness-sentry.json ]; then
+            cp validation/reports/defense-readiness-sentry.json validation/reports/ci/
+          fi
+      - name: Build CI summary
+        if: always()
+        run: python scripts/build_ci_summary.py
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sentry-ci-reports-${{ github.run_id }}
+          path: |
+            validation/reports/ci/
+          if-no-files-found: warn
+          retention-days: 30
