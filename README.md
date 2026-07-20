@@ -6,9 +6,10 @@ SENTRY does not jam, target, engage, or automate any response. Its sensors are p
 
 ## Status
 
-Version: `0.5.0-darkspace-integrated`
+Version: `0.5.0-darkspace-integrated`  
+Maturity: **software-gate prototype (pre-physical)**
 
-Software gates pass on desktop/CI. Physical gates still require real hardware bench testing.
+Software gates pass on desktop/CI with committed evidence in [`validation/published/RESULTS.md`](validation/published/RESULTS.md). Physical gates (G1–G5) still require real hardware. No field FP/FN claim yet.
 
 ## What It Does
 

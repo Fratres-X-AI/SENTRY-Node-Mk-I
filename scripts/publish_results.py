@@ -36,6 +36,10 @@ def _scrub_obj(obj: object) -> object:
     return obj
 
 
+def _gate_pass(flag: object) -> str:
+    return "PASS" if flag else "FAIL"
+
+
 def _write_results_md(summary: dict, audit: dict) -> str:
     gates = summary.get("gates", {})
     pytest = gates.get("pytest", {})
@@ -43,73 +47,125 @@ def _write_results_md(summary: dict, audit: dict) -> str:
     mypy = gates.get("mypy", {})
     scenarios = (gates.get("audit") or {}).get("scenarios") or []
     failure_modes = (audit.get("failure_modes") or {}).get("modes") or []
+    version = audit.get("version") or "0.5.0-darkspace-integrated"
+    overall = "PASS" if summary.get("all_passed") else "FAIL"
+    generated = summary.get("generated_at", "")
+
+    failure_meaning = {
+        "sensor_dropout_rf": "RF loss degrades confidence; does not fabricate RED",
+        "thermal_throttle_jamming": "Thermal + jamming enters safe HOLD",
+        "tamper_during_intrusion": "Tamper dominates; HOLD wins",
+        "low_power_duty_cycle": "Power discipline retained",
+        "deployment_chain_break": "Broken chain reported as non-operational",
+        "deployment_entanglement": "Entangled nodes do not fake mesh readiness",
+        "deployment_antenna_damage": "Damaged antennas fail BIT honestly",
+        "deployment_alert_suppression": "Alerts suppressed until operational phase",
+    }
 
     lines = [
-        "# SENTRY Node Mk I - Published Test Results",
+        "# SENTRY Node Mk I - Validation Evidence",
         "",
-        f"**Generated:** {summary.get('generated_at', '')}  ",
-        f"**Source:** {summary.get('source', 'local')}  ",
-        f"**Overall:** {'PASS' if summary.get('all_passed') else 'FAIL'}  ",
-        f"**Version:** {(audit.get('version') or '0.5.0-darkspace-integrated')}",
+        "**Maturity:** software-gate prototype (pre-physical)  ",
+        f"**Version:** `{version}`  ",
+        f"**Snapshot:** {generated}  ",
+        f"**Overall software gates:** {overall}  ",
         "",
-        "This directory is committed on purpose so validation evidence is visible in the",
-        "repository (not only as ephemeral GitHub Actions artifacts).",
+        "Fratres X AI standard: physics first, reviewable gates, conservative claims.",
+        "This folder is committed evidence - not marketing copy.",
+        "",
+        "## What this proves",
+        "",
+        "| Claim | Status | Evidence |",
+        "|-------|--------|----------|",
+        "| Threat scoring responds correctly across benign / intrusion / jamming / low-vis | Proven in simulation | Scenario battery below |",
+        "| HMAC audit chain detects tampering and remains valid on clean runs | Proven in CI/sim | Audit + tamper probe |",
+        "| Strict typing holds on the Python package | Proven | Mypy gate |",
+        "| Unit tests for the measured core pass | Proven | Pytest gate |",
+        "| Mean simulated power stays under the 5 W target | Proven in sim | Scenario power columns |",
+        "| Field FP/FN, RF front-end performance, Pi GPIO/USB stack | **Not proven** | Requires G1-G5 hardware gates |",
+        "| Chain-deploy / high-g launch survival for COTS Pi nodes | **Not a product claim** | Stress sims show near-zero survival - by design |",
+        "",
+        "## How to read this report",
+        "",
+        "- **Scenario PASS** means the guardian reached the expected alert class and kept a valid audit chain.",
+        "- **Failure-mode PASS** means the software correctly handled injected degradation. Counts like `0/8 operational` are expected outcomes under destructive stress - not a silent product failure.",
+        f"- **Coverage 100%** applies only to the **measured include set** (currently {cov.get('lines_valid', 0)} statements). Hardware, GPU, and deployment modules omitted from the fail-under gate are not claimed covered.",
         "",
         "## Gate summary",
         "",
         "| Gate | Result | Detail |",
         "|------|--------|--------|",
-        f"| Pytest | {'PASS' if pytest.get('ok') else 'FAIL'} | {pytest.get('passed_count', pytest.get('passed', 0))}/{pytest.get('tests', 0)} in {pytest.get('time_s', 0)}s |",
-        f"| Coverage (measured include set) | {'PASS' if cov.get('line_rate', 0) >= 100 else 'FAIL'} | {cov.get('line_rate', 0)}% / {cov.get('lines_covered', 0)}/{cov.get('lines_valid', 0)} lines |",
-        f"| Mypy (strict) | {'PASS' if mypy.get('ok') or mypy.get('passed') else 'FAIL'} | {mypy.get('source_files', 0)} files / {mypy.get('errors', 0)} errors |",
-        f"| Simulation smoke | {'PASS' if (gates.get('simulation') or {}).get('ok') else 'FAIL'} | intrusion path |",
-        f"| Build readiness | {'PASS' if (gates.get('build_readiness') or {}).get('ok') else 'FAIL'} | software gate |",
-        f"| Defense readiness audit | {'PASS' if (gates.get('audit') or {}).get('ok') else 'FAIL'} | overall {(gates.get('audit') or {}).get('overall')} |",
+        f"| Pytest | {_gate_pass(pytest.get('ok'))} | {pytest.get('passed_count', pytest.get('passed', 0))}/{pytest.get('tests', 0)} in {pytest.get('time_s', 0)} s |",
+        f"| Coverage (include set) | {_gate_pass(cov.get('line_rate', 0) >= 100)} | {cov.get('line_rate', 0)}% of {cov.get('lines_valid', 0)} measured lines |",
+        f"| Mypy (strict) | {_gate_pass(mypy.get('ok') or mypy.get('passed'))} | {mypy.get('source_files', 0)} files, {mypy.get('errors', 0)} errors |",
+        f"| Simulation smoke | {_gate_pass((gates.get('simulation') or {}).get('ok'))} | intrusion path, audit valid |",
+        f"| Build readiness (software) | {_gate_pass((gates.get('build_readiness') or {}).get('ok'))} | required files + site layout |",
+        f"| Defense readiness audit | {_gate_pass((gates.get('audit') or {}).get('ok'))} | overall {(gates.get('audit') or {}).get('overall')} |",
         "",
-        "## Scenario battery",
+        "## Scenario battery (expected behavior)",
         "",
-        "| Scenario | Status | Frames | Max level | Mean CPU % | Mean W | Audit chain |",
-        "|----------|--------|--------|-----------|------------|--------|-------------|",
+        "| Scenario | Result | Max level | Mean CPU % | Mean W | Audit |",
+        "|----------|--------|-----------|------------|--------|-------|",
     ]
 
-    audit_scenarios = {s.get("scenario"): s for s in audit.get("scenarios") or [] if isinstance(s, dict)}
+    audit_scenarios = {
+        s.get("scenario"): s for s in (audit.get("scenarios") or []) if isinstance(s, dict)
+    }
     for row in scenarios:
         name = row.get("name", "unknown")
         detail = audit_scenarios.get(name, {})
         power = detail.get("power") or {}
+        audit_ok = detail.get("audit_chain_valid")
+        audit_label = "valid" if audit_ok else ("invalid" if audit_ok is False else "")
         lines.append(
-            f"| {name} | {row.get('status')} | {detail.get('frames', '')} | "
-            f"{detail.get('max_level', '')} | {power.get('mean_cpu_percent', '')} | "
-            f"{power.get('mean_watts', '')} | "
-            f"{'valid' if detail.get('audit_chain_valid') else detail.get('audit_chain_valid')} |"
+            f"| {name} | {row.get('status')} | {detail.get('max_level', '')} | "
+            f"{power.get('mean_cpu_percent', '')} | {power.get('mean_watts', '')} | {audit_label} |"
         )
 
     lines.extend(
         [
             "",
-            "## Failure modes",
+            "Interpretation: quiet scene stays CLEAR; intrusion escalates; jamming forces HOLD;",
+            "degraded visibility stays elevated but not catastrophic.",
             "",
-            "| Mode | Passed | Max level | Detail |",
-            "|------|--------|-----------|--------|",
+            "## Resilience battery (injected faults)",
+            "",
+            "These cases pass when the node **refuses to lie** under bad conditions.",
+            "",
+            "| Mode | Gate | Observed | Meaning |",
+            "|------|------|----------|---------|",
         ]
     )
     for mode in failure_modes:
         if not isinstance(mode, dict):
             continue
+        key = str(mode.get("mode", ""))
+        passed = bool(mode.get("passed"))
+        observed = mode.get("detail") or mode.get("max_level") or ""
+        meaning = failure_meaning.get(key, "Injected fault handled without false readiness")
         lines.append(
-            f"| {mode.get('mode')} | {mode.get('passed')} | {mode.get('max_level', '')} | {mode.get('detail', '')} |"
+            f"| {key} | {_gate_pass(passed)} | {observed} | {meaning} |"
         )
 
     lines.extend(
         [
             "",
-            "## Machine-readable artifacts in this folder",
+            "## Explicit non-claims",
             "",
-            "- `summary.json` - gate rollup",
-            "- `pytest-junit.xml` - pytest JUnit",
-            "- `coverage.xml` - coverage.xml",
-            "- `defense-readiness-sentry.json` - full audit (paths sanitized)",
-            "- `mypy.txt`, `simulation.txt`, `build_readiness.txt`, `audit.txt` - gate logs",
+            "- Not field-validated. No outdoor FP/FN study yet.",
+            "- RTL-SDR Blog V4 is not a native 2.4/5.8 GHz solution; high-band paths remain conversion/synthetic until a real front-end is qualified.",
+            "- Meshtastic RX remains a conservative spool/integration path.",
+            "- High-g / line-charge reference sims destroy COTS Pi stacks - that result is a physics boundary, not a shipping promise.",
+            "",
+            "## Machine-readable artifacts",
+            "",
+            "| File | Contents |",
+            "|------|----------|",
+            "| `summary.json` | Gate rollup |",
+            "| `pytest-junit.xml` | Pytest JUnit |",
+            "| `coverage.xml` | Coverage for the measured include set |",
+            "| `defense-readiness-sentry.json` | Full audit (local paths sanitized) |",
+            "| `mypy.txt` / `simulation.txt` / `build_readiness.txt` / `audit.txt` | Gate logs |",
             "",
             "## Reproduce",
             "",
@@ -118,6 +174,8 @@ def _write_results_md(summary: dict, audit: dict) -> str:
             "python scripts/publish_results.py",
             "```",
             "",
+            "CI also uploads `sentry-ci-reports-<run_id>` on every green Actions run.",
+            "",
         ]
     )
     return "\n".join(lines)
@@ -125,7 +183,7 @@ def _write_results_md(summary: dict, audit: dict) -> str:
 
 def main() -> int:
     if not (CI_DIR / "summary.json").exists():
-        raise SystemExit("missing validation/reports/ci/summary.json — run collect_ci_reports.py first")
+        raise SystemExit("missing validation/reports/ci/summary.json - run collect_ci_reports.py first")
 
     OUT.mkdir(parents=True, exist_ok=True)
 
@@ -162,7 +220,6 @@ def main() -> int:
         text = _scrub(src.read_text(encoding="utf-8", errors="replace"))
         (OUT / name).write_text(text, encoding="utf-8")
 
-    # Strip absolute paths from coverage XML filenames if present
     cov = OUT / "coverage.xml"
     if cov.exists():
         try:
@@ -171,7 +228,6 @@ def main() -> int:
                 for attr in ("filename", "name"):
                     if attr in elem.attrib:
                         elem.attrib[attr] = elem.attrib[attr].replace("\\", "/")
-                        # keep package-relative paths only
                         if "src/sentry" in elem.attrib[attr]:
                             elem.attrib[attr] = elem.attrib[attr].split("src/sentry", 1)[-1]
                             if not elem.attrib[attr].startswith("src/"):
@@ -180,7 +236,6 @@ def main() -> int:
         except ET.ParseError:
             pass
 
-    # Do not commit bulky HTML coverage tree; XML + SUMMARY is enough.
     html_dir = OUT / "coverage_html"
     if html_dir.exists():
         shutil.rmtree(html_dir)

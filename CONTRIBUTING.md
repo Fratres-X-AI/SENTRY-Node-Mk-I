@@ -32,7 +32,8 @@ git add validation/published
 ```
 
 - `validation/reports/ci/` is gitignored (scratch).
-- `validation/published/` is tracked on purpose — human-readable `RESULTS.md` plus JUnit/coverage/audit JSON.
+- `validation/published/` is tracked on purpose — Fratres-style evidence: maturity label, proved vs not-proved, JUnit/coverage/audit JSON.
+- Keep claims conservative. Failure-mode rows that show `0/N operational` are expected stress outcomes, not silent product failures.
 - CI also uploads `sentry-ci-reports-<run_id>` as an Actions artifact.
 
 ## Pull Requests
