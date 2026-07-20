@@ -1,0 +1,20 @@
+{
+  "codename": "SENTRY",
+  "scenario": "intrusion",
+  "frames": 31,
+  "max_level": "RED",
+  "audit_chain_valid": true,
+  "sqlite_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_intrusion.db",
+  "power": {
+    "samples": 31,
+    "mean_watts": 3.3,
+    "max_watts": 3.3,
+    "mean_cpu_percent": 78.1,
+    "duty_active_fraction": 1.0,
+    "target_avg_watts": 5.0,
+    "under_target": true,
+    "any_throttled": true
+  },
+  "alerts_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_intrusion.jsonl",
+  "audit_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_audit_intrusion.jsonl"
+}

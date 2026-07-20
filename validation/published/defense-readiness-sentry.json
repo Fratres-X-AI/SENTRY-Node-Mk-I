@@ -1,0 +1,754 @@
+{
+  "codename": "SENTRY",
+  "type_designation": "AN/GSQ-100(V)1",
+  "common_name": "SENTRY Node Mk I",
+  "role_descriptor": "Passive Multi-Sensor Early-Warning Node (PMSEWN)",
+  "project": "SENTRY-Node-Mk-I",
+  "version": "0.5.0-darkspace-integrated",
+  "generated_at": "2026-07-19T21:23:37.536085+00:00",
+  "mode": "defensive-only",
+  "hardware_profile": "raspberry-pi-zero-2-w",
+  "overall": "PASS",
+  "scenarios": [
+    {
+      "scenario": "benign",
+      "status": "PASS",
+      "codename": "SENTRY",
+      "frames": 41,
+      "max_level": "CLEAR",
+      "audit_chain_valid": true,
+      "sqlite_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_benign.db",
+      "power": {
+        "samples": 41,
+        "mean_watts": 3.3,
+        "max_watts": 3.3,
+        "mean_cpu_percent": 50.1,
+        "duty_active_fraction": 1.0,
+        "target_avg_watts": 5.0,
+        "under_target": true,
+        "any_throttled": true
+      },
+      "alerts_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_benign.jsonl",
+      "audit_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_audit_benign.jsonl"
+    },
+    {
+      "scenario": "intrusion",
+      "status": "PASS",
+      "codename": "SENTRY",
+      "frames": 41,
+      "max_level": "RED",
+      "audit_chain_valid": true,
+      "sqlite_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_intrusion.db",
+      "power": {
+        "samples": 41,
+        "mean_watts": 3.3,
+        "max_watts": 3.3,
+        "mean_cpu_percent": 46.6,
+        "duty_active_fraction": 1.0,
+        "target_avg_watts": 5.0,
+        "under_target": true,
+        "any_throttled": false
+      },
+      "alerts_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_intrusion.jsonl",
+      "audit_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_audit_intrusion.jsonl"
+    },
+    {
+      "scenario": "jamming",
+      "status": "PASS",
+      "codename": "SENTRY",
+      "frames": 41,
+      "max_level": "HOLD",
+      "audit_chain_valid": true,
+      "sqlite_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_jamming.db",
+      "power": {
+        "samples": 41,
+        "mean_watts": 3.3,
+        "max_watts": 3.3,
+        "mean_cpu_percent": 41.3,
+        "duty_active_fraction": 1.0,
+        "target_avg_watts": 5.0,
+        "under_target": true,
+        "any_throttled": false
+      },
+      "alerts_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_jamming.jsonl",
+      "audit_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_audit_jamming.jsonl"
+    },
+    {
+      "scenario": "low_visibility",
+      "status": "PASS",
+      "codename": "SENTRY",
+      "frames": 41,
+      "max_level": "YELLOW",
+      "audit_chain_valid": true,
+      "sqlite_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_low_visibility.db",
+      "power": {
+        "samples": 41,
+        "mean_watts": 3.3,
+        "max_watts": 3.3,
+        "mean_cpu_percent": 35.8,
+        "duty_active_fraction": 1.0,
+        "target_avg_watts": 5.0,
+        "under_target": true,
+        "any_throttled": false
+      },
+      "alerts_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_sim_low_visibility.jsonl",
+      "audit_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_audit_low_visibility.jsonl"
+    }
+  ],
+  "hardware_probe": {
+    "codename": "SENTRY",
+    "adapters": [
+      {
+        "adapter": "pir_gpio",
+        "available": false,
+        "detail": "not running on Raspberry Pi",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "pi_detected": false
+      },
+      {
+        "adapter": "acoustic_sensor",
+        "available": false,
+        "detail": "pyaudio/scipy/numpy not available",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "pi_detected": false
+      },
+      {
+        "adapter": "rf_sensor",
+        "available": false,
+        "detail": "rtl_power not in PATH",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "pi_detected": false
+      },
+      {
+        "adapter": "visual",
+        "available": true,
+        "detail": "camera_index=0",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "pi_detected": false
+      },
+      {
+        "adapter": "tamper_gpio",
+        "available": false,
+        "detail": "not running on Raspberry Pi",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "pi_detected": false
+      },
+      {
+        "adapter": "meshtastic_handler",
+        "available": false,
+        "detail": "spool=\\var\\lib\\sentry\\meshtastic_spool.jsonl",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "pi_detected": false
+      }
+    ],
+    "available_count": 1,
+    "total_count": 6,
+    "hardware_profile": "raspberry-pi-zero-2-w",
+    "known_gaps": [
+      "RTL-SDR Blog V4 cannot natively tune 5.8 GHz \u2014 5g8 band uses synthetic fallback",
+      "Field FP/FN rates unvalidated",
+      "Meshtastic RX hook is spool-based placeholder"
+    ]
+  },
+  "failure_modes": {
+    "codename": "SENTRY",
+    "overall": "PASS",
+    "modes": [
+      {
+        "mode": "sensor_dropout_rf",
+        "passed": true,
+        "detail": "max_level=YELLOW",
+        "max_level": "YELLOW"
+      },
+      {
+        "mode": "thermal_throttle_jamming",
+        "passed": true,
+        "detail": "max_level=HOLD",
+        "max_level": "HOLD"
+      },
+      {
+        "mode": "tamper_during_intrusion",
+        "passed": true,
+        "detail": "max_level=HOLD",
+        "max_level": "HOLD"
+      },
+      {
+        "mode": "low_power_duty_cycle",
+        "passed": true,
+        "detail": "active=True sleep=False",
+        "max_level": "CLEAR"
+      },
+      {
+        "mode": "deployment_chain_break",
+        "passed": true,
+        "detail": "operational=0/8",
+        "max_level": "CLEAR"
+      },
+      {
+        "mode": "deployment_entanglement",
+        "passed": true,
+        "detail": "failed_join=6/6",
+        "max_level": "CLEAR"
+      },
+      {
+        "mode": "deployment_antenna_damage",
+        "passed": true,
+        "detail": "passed=0/4",
+        "max_level": "CLEAR"
+      },
+      {
+        "mode": "deployment_alert_suppression",
+        "passed": true,
+        "detail": "max_level=CLEAR phase=deployed",
+        "max_level": "CLEAR"
+      }
+    ]
+  },
+  "tamper_detection": {
+    "path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_audit_intrusion.jsonl",
+    "tampered_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\tampered_audit_probe.jsonl",
+    "passed": true
+  },
+  "live_ingest_smoke": {
+    "codename": "SENTRY",
+    "mode": "live_ingest",
+    "frames": 3,
+    "max_level": "CLEAR",
+    "fallback": {
+      "pir": true,
+      "acoustic": true,
+      "rf": true,
+      "visual": false,
+      "tamper": true,
+      "meshtastic": true
+    },
+    "power": {
+      "samples": 3,
+      "mean_watts": 2.75,
+      "max_watts": 2.75,
+      "mean_cpu_percent": 63.0,
+      "duty_active_fraction": 1.0,
+      "target_avg_watts": 5.0,
+      "under_target": true,
+      "any_throttled": true
+    },
+    "mesh": {
+      "local_node": "sentry-pi-zero-001",
+      "peers": [
+        "sentry-pi-zero-002",
+        "sentry-pi-zero-003",
+        "sentry-pi-zero-004"
+      ],
+      "mesh_available": false,
+      "inbox_count": 0
+    },
+    "sqlite_path": "validation\\reports\\audit_log.db",
+    "alerts_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_live_alerts.jsonl",
+    "audit_path": "<local-path>\\Desktop\\FRAXWERX\\Sentry\\validation\\reports\\sentry_live_audit.jsonl"
+  },
+  "deployment_chain": {
+    "sequence": {
+      "codename": "SENTRY",
+      "chain_id": "CHAIN-APPROACH-ALPHA",
+      "deployment_state": {
+        "phase": "chain_joining",
+        "chain_id": "",
+        "physics": {
+          "method": "pneumatic_soft",
+          "node_count": 8,
+          "chain_length_m": 52.5,
+          "peak_g_launch": 35.0,
+          "max_line_tension_n": 82.87,
+          "operational_nodes": 0,
+          "chain_intact": false,
+          "nodes": [
+            {
+              "index": 0,
+              "peak_g": 33.53,
+              "line_tension_n": 82.87,
+              "spacing_m": 7.5,
+              "pi_survives": true,
+              "rtl_survives": false,
+              "mic_survives": false,
+              "battery_survives": true,
+              "node_operational": false
+            },
+            {
+              "index": 1,
+              "peak_g": 32.96,
+              "line_tension_n": 81.46,
+              "spacing_m": 7.5,
+              "pi_survives": true,
+              "rtl_survives": false,
+              "mic_survives": false,
+              "battery_survives": true,
+              "node_operational": false
+            },
+            {
+              "index": 2,
+              "peak_g": 32.38,
+              "line_tension_n": 80.05,
+              "spacing_m": 7.5,
+              "pi_survives": true,
+              "rtl_survives": false,
+              "mic_survives": false,
+              "battery_survives": true,
+              "node_operational": false
+            },
+            {
+              "index": 3,
+              "peak_g": 31.81,
+              "line_tension_n": 78.64,
+              "spacing_m": 7.5,
+              "pi_survives": true,
+              "rtl_survives": false,
+              "mic_survives": false,
+              "battery_survives": true,
+              "node_operational": false
+            },
+            {
+              "index": 4,
+              "peak_g": 31.23,
+              "line_tension_n": 77.23,
+              "spacing_m": 7.5,
+              "pi_survives": true,
+              "rtl_survives": false,
+              "mic_survives": false,
+              "battery_survives": true,
+              "node_operational": false
+            },
+            {
+              "index": 5,
+              "peak_g": 30.66,
+              "line_tension_n": 75.82,
+              "spacing_m": 7.5,
+              "pi_survives": true,
+              "rtl_survives": false,
+              "mic_survives": false,
+              "battery_survives": true,
+              "node_operational": false
+            },
+            {
+              "index": 6,
+              "peak_g": 30.08,
+              "line_tension_n": 74.41,
+              "spacing_m": 7.5,
+              "pi_survives": true,
+              "rtl_survives": false,
+              "mic_survives": false,
+              "battery_survives": true,
+              "node_operational": false
+            },
+            {
+              "index": 7,
+              "peak_g": 29.51,
+              "line_tension_n": 73.0,
+              "spacing_m": 7.5,
+              "pi_survives": true,
+              "rtl_survives": false,
+              "mic_survives": true,
+              "battery_survives": true,
+              "node_operational": false
+            }
+          ],
+          "blunt_assessment": "Mechanical pneumatic_soft: 0/8 nodes operational. Ruggedization or hand-emplace required for full chain."
+        },
+        "topology": {
+          "chain_id": "CHAIN-APPROACH-ALPHA",
+          "spacing_m": 7.5,
+          "operational_count": 0,
+          "mesh_joined_count": 0,
+          "chain_connected": false,
+          "nodes": [
+            {
+              "node_id": "sentry-chain-000",
+              "chain_index": 0,
+              "offset_m": 0.0,
+              "role": "anchor",
+              "upstream_id": null,
+              "downstream_id": "sentry-chain-001",
+              "operational": false,
+              "mesh_joined": false
+            },
+            {
+              "node_id": "sentry-chain-001",
+              "chain_index": 1,
+              "offset_m": 7.5,
+              "role": "relay",
+              "upstream_id": "sentry-chain-000",
+              "downstream_id": "sentry-chain-002",
+              "operational": false,
+              "mesh_joined": false
+            },
+            {
+              "node_id": "sentry-chain-002",
+              "chain_index": 2,
+              "offset_m": 15.0,
+              "role": "relay",
+              "upstream_id": "sentry-chain-001",
+              "downstream_id": "sentry-chain-003",
+              "operational": false,
+              "mesh_joined": false
+            },
+            {
+              "node_id": "sentry-chain-003",
+              "chain_index": 3,
+              "offset_m": 22.5,
+              "role": "relay",
+              "upstream_id": "sentry-chain-002",
+              "downstream_id": "sentry-chain-004",
+              "operational": false,
+              "mesh_joined": false
+            },
+            {
+              "node_id": "sentry-chain-004",
+              "chain_index": 4,
+              "offset_m": 30.0,
+              "role": "relay",
+              "upstream_id": "sentry-chain-003",
+              "downstream_id": "sentry-chain-005",
+              "operational": false,
+              "mesh_joined": false
+            },
+            {
+              "node_id": "sentry-chain-005",
+              "chain_index": 5,
+              "offset_m": 37.5,
+              "role": "relay",
+              "upstream_id": "sentry-chain-004",
+              "downstream_id": "sentry-chain-006",
+              "operational": false,
+              "mesh_joined": false
+            },
+            {
+              "node_id": "sentry-chain-006",
+              "chain_index": 6,
+              "offset_m": 45.0,
+              "role": "relay",
+              "upstream_id": "sentry-chain-005",
+              "downstream_id": "sentry-chain-007",
+              "operational": false,
+              "mesh_joined": false
+            },
+            {
+              "node_id": "sentry-chain-007",
+              "chain_index": 7,
+              "offset_m": 52.5,
+              "role": "tail",
+              "upstream_id": "sentry-chain-006",
+              "downstream_id": null,
+              "operational": false,
+              "mesh_joined": false
+            }
+          ]
+        },
+        "join_result": {
+          "joined": [],
+          "failed": [
+            "sentry-chain-000",
+            "sentry-chain-001",
+            "sentry-chain-002",
+            "sentry-chain-003",
+            "sentry-chain-004",
+            "sentry-chain-005",
+            "sentry-chain-006",
+            "sentry-chain-007"
+          ],
+          "timeout_s": 45.0,
+          "topology": {
+            "chain_id": "CHAIN-APPROACH-ALPHA",
+            "spacing_m": 7.5,
+            "operational_count": 0,
+            "mesh_joined_count": 0,
+            "chain_connected": false,
+            "nodes": [
+              {
+                "node_id": "sentry-chain-000",
+                "chain_index": 0,
+                "offset_m": 0.0,
+                "role": "anchor",
+                "upstream_id": null,
+                "downstream_id": "sentry-chain-001",
+                "operational": false,
+                "mesh_joined": false
+              },
+              {
+                "node_id": "sentry-chain-001",
+                "chain_index": 1,
+                "offset_m": 7.5,
+                "role": "relay",
+                "upstream_id": "sentry-chain-000",
+                "downstream_id": "sentry-chain-002",
+                "operational": false,
+                "mesh_joined": false
+              },
+              {
+                "node_id": "sentry-chain-002",
+                "chain_index": 2,
+                "offset_m": 15.0,
+                "role": "relay",
+                "upstream_id": "sentry-chain-001",
+                "downstream_id": "sentry-chain-003",
+                "operational": false,
+                "mesh_joined": false
+              },
+              {
+                "node_id": "sentry-chain-003",
+                "chain_index": 3,
+                "offset_m": 22.5,
+                "role": "relay",
+                "upstream_id": "sentry-chain-002",
+                "downstream_id": "sentry-chain-004",
+                "operational": false,
+                "mesh_joined": false
+              },
+              {
+                "node_id": "sentry-chain-004",
+                "chain_index": 4,
+                "offset_m": 30.0,
+                "role": "relay",
+                "upstream_id": "sentry-chain-003",
+                "downstream_id": "sentry-chain-005",
+                "operational": false,
+                "mesh_joined": false
+              },
+              {
+                "node_id": "sentry-chain-005",
+                "chain_index": 5,
+                "offset_m": 37.5,
+                "role": "relay",
+                "upstream_id": "sentry-chain-004",
+                "downstream_id": "sentry-chain-006",
+                "operational": false,
+                "mesh_joined": false
+              },
+              {
+                "node_id": "sentry-chain-006",
+                "chain_index": 6,
+                "offset_m": 45.0,
+                "role": "relay",
+                "upstream_id": "sentry-chain-005",
+                "downstream_id": "sentry-chain-007",
+                "operational": false,
+                "mesh_joined": false
+              },
+              {
+                "node_id": "sentry-chain-007",
+                "chain_index": 7,
+                "offset_m": 52.5,
+                "role": "tail",
+                "upstream_id": "sentry-chain-006",
+                "downstream_id": null,
+                "operational": false,
+                "mesh_joined": false
+              }
+            ]
+          }
+        },
+        "post_landing": {
+          "codename": "SENTRY",
+          "chain_id": "CHAIN-APPROACH-ALPHA",
+          "checks_passed": 0,
+          "checks_total": 8,
+          "all_pass": false,
+          "checks": [
+            {
+              "node_id": "sentry-chain-000",
+              "power_ok": false,
+              "tamper_intact": false,
+              "antenna_deployed": false,
+              "sensors_responsive": false,
+              "mesh_ready": false,
+              "passed": false,
+              "detail": "Node failed impact \u2014 skip BIT"
+            },
+            {
+              "node_id": "sentry-chain-001",
+              "power_ok": false,
+              "tamper_intact": false,
+              "antenna_deployed": false,
+              "sensors_responsive": false,
+              "mesh_ready": false,
+              "passed": false,
+              "detail": "Node failed impact \u2014 skip BIT"
+            },
+            {
+              "node_id": "sentry-chain-002",
+              "power_ok": false,
+              "tamper_intact": false,
+              "antenna_deployed": false,
+              "sensors_responsive": false,
+              "mesh_ready": false,
+              "passed": false,
+              "detail": "Node failed impact \u2014 skip BIT"
+            },
+            {
+              "node_id": "sentry-chain-003",
+              "power_ok": false,
+              "tamper_intact": false,
+              "antenna_deployed": false,
+              "sensors_responsive": false,
+              "mesh_ready": false,
+              "passed": false,
+              "detail": "Node failed impact \u2014 skip BIT"
+            },
+            {
+              "node_id": "sentry-chain-004",
+              "power_ok": false,
+              "tamper_intact": false,
+              "antenna_deployed": false,
+              "sensors_responsive": false,
+              "mesh_ready": false,
+              "passed": false,
+              "detail": "Node failed impact \u2014 skip BIT"
+            },
+            {
+              "node_id": "sentry-chain-005",
+              "power_ok": false,
+              "tamper_intact": false,
+              "antenna_deployed": false,
+              "sensors_responsive": false,
+              "mesh_ready": false,
+              "passed": false,
+              "detail": "Node failed impact \u2014 skip BIT"
+            },
+            {
+              "node_id": "sentry-chain-006",
+              "power_ok": false,
+              "tamper_intact": false,
+              "antenna_deployed": false,
+              "sensors_responsive": false,
+              "mesh_ready": false,
+              "passed": false,
+              "detail": "Node failed impact \u2014 skip BIT"
+            },
+            {
+              "node_id": "sentry-chain-007",
+              "power_ok": false,
+              "tamper_intact": false,
+              "antenna_deployed": false,
+              "sensors_responsive": false,
+              "mesh_ready": false,
+              "passed": false,
+              "detail": "Node failed impact \u2014 skip BIT"
+            }
+          ]
+        }
+      },
+      "mesh_joined": 0,
+      "post_landing_pass": 0,
+      "operational": false
+    },
+    "monte_carlo": {
+      "total_scenarios": 5000,
+      "full_chain_survival_rate": 0.0,
+      "mean_operational_nodes": 0.04,
+      "entanglement_rate": 0.0007,
+      "antenna_fail_rate": 0.0025,
+      "battery_rupture_rate": 0.0003,
+      "method": "pneumatic_soft",
+      "device": "cpu",
+      "elapsed_s": 0.0547
+    },
+    "line_charge_reference": {
+      "method": "line_charge_reference",
+      "node_count": 8,
+      "chain_length_m": 52.5,
+      "peak_g_launch": 450.0,
+      "max_line_tension_n": 1057.91,
+      "operational_nodes": 0,
+      "chain_intact": false,
+      "nodes": [
+        {
+          "index": 0,
+          "peak_g": 431.1,
+          "line_tension_n": 1057.91,
+          "spacing_m": 7.5,
+          "pi_survives": false,
+          "rtl_survives": false,
+          "mic_survives": false,
+          "battery_survives": false,
+          "node_operational": false
+        },
+        {
+          "index": 1,
+          "peak_g": 423.71,
+          "line_tension_n": 1039.78,
+          "spacing_m": 7.5,
+          "pi_survives": false,
+          "rtl_survives": false,
+          "mic_survives": false,
+          "battery_survives": false,
+          "node_operational": false
+        },
+        {
+          "index": 2,
+          "peak_g": 416.32,
+          "line_tension_n": 1021.66,
+          "spacing_m": 7.5,
+          "pi_survives": false,
+          "rtl_survives": false,
+          "mic_survives": false,
+          "battery_survives": false,
+          "node_operational": false
+        },
+        {
+          "index": 3,
+          "peak_g": 408.93,
+          "line_tension_n": 1003.53,
+          "spacing_m": 7.5,
+          "pi_survives": false,
+          "rtl_survives": false,
+          "mic_survives": false,
+          "battery_survives": false,
+          "node_operational": false
+        },
+        {
+          "index": 4,
+          "peak_g": 401.54,
+          "line_tension_n": 985.41,
+          "spacing_m": 7.5,
+          "pi_survives": false,
+          "rtl_survives": false,
+          "mic_survives": false,
+          "battery_survives": false,
+          "node_operational": false
+        },
+        {
+          "index": 5,
+          "peak_g": 394.15,
+          "line_tension_n": 967.28,
+          "spacing_m": 7.5,
+          "pi_survives": false,
+          "rtl_survives": false,
+          "mic_survives": false,
+          "battery_survives": false,
+          "node_operational": false
+        },
+        {
+          "index": 6,
+          "peak_g": 386.76,
+          "line_tension_n": 949.16,
+          "spacing_m": 7.5,
+          "pi_survives": false,
+          "rtl_survives": false,
+          "mic_survives": false,
+          "battery_survives": false,
+          "node_operational": false
+        },
+        {
+          "index": 7,
+          "peak_g": 379.37,
+          "line_tension_n": 931.03,
+          "spacing_m": 7.5,
+          "pi_survives": false,
+          "rtl_survives": false,
+          "mic_survives": false,
+          "battery_survives": false,
+          "node_operational": false
+        }
+      ],
+      "blunt_assessment": "LINE-CHARGE REFERENCE: peak g ~450 \u2014 COTS Pi/RTL/MEMS destroyed. Not aligned with soldier-safety or cheap mandate."
+    }
+  }
+}

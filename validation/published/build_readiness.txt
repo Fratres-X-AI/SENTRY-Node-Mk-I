@@ -1,0 +1,20 @@
+{
+  "codename": "SENTRY",
+  "type_designation": "AN/GSQ-100(V)1",
+  "gate": "build_readiness_software",
+  "version": "0.5.0-darkspace-integrated",
+  "overall": "PASS",
+  "checks": {
+    "required_files": 15,
+    "site_nodes": 4,
+    "pytest": "PASS"
+  },
+  "next_physical_gates": [
+    "G1 probe",
+    "G2 RF",
+    "G3 acoustic",
+    "G4 mesh",
+    "G5 soak"
+  ],
+  "runpod_required": false
+}

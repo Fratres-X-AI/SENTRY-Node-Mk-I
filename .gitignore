@@ -20,5 +20,6 @@ validation/reports/ci/
 validation/runpod_artifacts/
 config/baseline.npy
 !validation/reports/.gitkeep
+# Committed validation evidence lives in validation/published/ (tracked on purpose).
 .DS_Store
 Thumbs.db

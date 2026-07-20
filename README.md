@@ -22,6 +22,7 @@ Software gates pass on desktop/CI. Physical gates still require real hardware be
 
 | Document | Purpose |
 |----------|---------|
+| [`validation/published/RESULTS.md`](validation/published/RESULTS.md) | **Committed test results** (gates, scenarios, JUnit, coverage) |
 | [`docs/system_datasheet.md`](docs/system_datasheet.md) | Full system spec, power math, RF notes, outputs |
 | [`docs/build_assembly.md`](docs/build_assembly.md) | Physical assembly and GPIO wiring |
 | [`docs/pi_deployment.md`](docs/pi_deployment.md) | Pi install and service setup |

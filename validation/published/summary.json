@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-07-19T21:30:25.817803+00:00",
+  "source": "committed-snapshot",
+  "all_passed": true,
+  "gates": {
+    "pytest": {
+      "tests": 38,
+      "passed": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "time_s": 51.513,
+      "ok": true,
+      "passed_count": 38,
+      "coverage": {
+        "line_rate": 100.0,
+        "lines_valid": 47,
+        "lines_covered": 47,
+        "packages": [
+          {
+            "name": "src.sentry",
+            "line_rate_pct": 100.0
+          },
+          {
+            "name": "src.sentry.networking",
+            "line_rate_pct": 100.0
+          },
+          {
+            "name": "src.sentry.sensors",
+            "line_rate_pct": 100.0
+          }
+        ]
+      }
+    },
+    "mypy": {
+      "passed": true,
+      "source_files": 46,
+      "errors": 0,
+      "ok": true
+    },
+    "simulation": {
+      "ok": true
+    },
+    "build_readiness": {
+      "ok": true
+    },
+    "audit": {
+      "ok": true,
+      "passed": true,
+      "overall": "PASS",
+      "scenarios": [
+        {
+          "name": "benign",
+          "status": "PASS"
+        },
+        {
+          "name": "intrusion",
+          "status": "PASS"
+        },
+        {
+          "name": "jamming",
+          "status": "PASS"
+        },
+        {
+          "name": "low_visibility",
+          "status": "PASS"
+        }
+      ],
+      "failure_modes_overall": "PASS",
+      "tamper_detection": true
+    }
+  },
+  "published_at": "2026-07-20T00:12:40.275576+00:00"
+}

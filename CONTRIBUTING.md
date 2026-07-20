@@ -23,13 +23,17 @@ python validation/build_readiness.py
 python run_complete_audit.py
 ```
 
-To regenerate the same report bundle CI uploads:
+To regenerate reports and **commit real results into the repo**:
 
 ```bash
 python scripts/collect_ci_reports.py
+python scripts/publish_results.py
+git add validation/published
 ```
 
-Outputs land in `validation/reports/ci/` (gitignored). On GitHub, download them from **Actions → run → Artifacts → `sentry-ci-reports-<run_id>`**.
+- `validation/reports/ci/` is gitignored (scratch).
+- `validation/published/` is tracked on purpose — human-readable `RESULTS.md` plus JUnit/coverage/audit JSON.
+- CI also uploads `sentry-ci-reports-<run_id>` as an Actions artifact.
 
 ## Pull Requests
 
